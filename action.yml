@@ -1,0 +1,49 @@
+name: 'AWS SNS Send Message'
+description: 'Publish messages to AWS SNS topics with support for message attributes and deduplication'
+author: 'predictr-io'
+
+branding:
+  icon: 'send'
+  color: 'orange'
+
+inputs:
+  # Required parameters
+  topic-arn:
+    description: 'SNS topic ARN (e.g., arn:aws:sns:us-east-1:123456789012:my-topic)'
+    required: true
+
+  message:
+    description: 'Message content (string, max 256 KB)'
+    required: true
+
+  # Optional SNS parameters
+  subject:
+    description: 'Message subject (optional, used for email subscriptions)'
+    required: false
+
+  message-attributes:
+    description: 'Message attributes as JSON object (e.g., {"Type": {"DataType": "String", "StringValue": "order"}})'
+    required: false
+
+  message-group-id:
+    description: 'Message group ID for FIFO topics (required for FIFO topics)'
+    required: false
+
+  message-deduplication-id:
+    description: 'Message deduplication ID for FIFO topics (optional if content-based deduplication is enabled)'
+    required: false
+
+  message-structure:
+    description: 'Message structure: "json" for platform-specific payloads, or leave empty for raw message'
+    required: false
+
+outputs:
+  message-id:
+    description: 'Unique identifier assigned to the message by SNS'
+
+  sequence-number:
+    description: 'Sequence number for FIFO topics (only for FIFO topics)'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
