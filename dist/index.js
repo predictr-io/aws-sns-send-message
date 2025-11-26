@@ -3195,16 +3195,16 @@ function copyFile(srcFile, destFile, force) {
 
 /***/ }),
 
-/***/ 9463:
+/***/ 2078:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.resolveHttpAuthSchemeConfig = exports.defaultSQSHttpAuthSchemeProvider = exports.defaultSQSHttpAuthSchemeParametersProvider = void 0;
+exports.resolveHttpAuthSchemeConfig = exports.defaultSNSHttpAuthSchemeProvider = exports.defaultSNSHttpAuthSchemeParametersProvider = void 0;
 const core_1 = __nccwpck_require__(8704);
 const util_middleware_1 = __nccwpck_require__(6324);
-const defaultSQSHttpAuthSchemeParametersProvider = async (config, context, input) => {
+const defaultSNSHttpAuthSchemeParametersProvider = async (config, context, input) => {
     return {
         operation: (0, util_middleware_1.getSmithyContext)(context).operation,
         region: (await (0, util_middleware_1.normalizeProvider)(config.region)()) ||
@@ -3213,12 +3213,12 @@ const defaultSQSHttpAuthSchemeParametersProvider = async (config, context, input
             })(),
     };
 };
-exports.defaultSQSHttpAuthSchemeParametersProvider = defaultSQSHttpAuthSchemeParametersProvider;
+exports.defaultSNSHttpAuthSchemeParametersProvider = defaultSNSHttpAuthSchemeParametersProvider;
 function createAwsAuthSigv4HttpAuthOption(authParameters) {
     return {
         schemeId: "aws.auth#sigv4",
         signingProperties: {
-            name: "sqs",
+            name: "sns",
             region: authParameters.region,
         },
         propertiesExtractor: (config, context) => ({
@@ -3229,7 +3229,7 @@ function createAwsAuthSigv4HttpAuthOption(authParameters) {
         }),
     };
 }
-const defaultSQSHttpAuthSchemeProvider = (authParameters) => {
+const defaultSNSHttpAuthSchemeProvider = (authParameters) => {
     const options = [];
     switch (authParameters.operation) {
         default: {
@@ -3238,7 +3238,7 @@ const defaultSQSHttpAuthSchemeProvider = (authParameters) => {
     }
     return options;
 };
-exports.defaultSQSHttpAuthSchemeProvider = defaultSQSHttpAuthSchemeProvider;
+exports.defaultSNSHttpAuthSchemeProvider = defaultSNSHttpAuthSchemeProvider;
 const resolveHttpAuthSchemeConfig = (config) => {
     const config_0 = (0, core_1.resolveAwsSdkSigV4Config)(config);
     return Object.assign(config_0, {
@@ -3250,7 +3250,7 @@ exports.resolveHttpAuthSchemeConfig = resolveHttpAuthSchemeConfig;
 
 /***/ }),
 
-/***/ 9553:
+/***/ 7352:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -3259,7 +3259,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.defaultEndpointResolver = void 0;
 const util_endpoints_1 = __nccwpck_require__(3068);
 const util_endpoints_2 = __nccwpck_require__(9674);
-const ruleset_1 = __nccwpck_require__(8090);
+const ruleset_1 = __nccwpck_require__(5509);
 const cache = new util_endpoints_2.EndpointCache({
     size: 50,
     params: ["Endpoint", "Region", "UseDualStack", "UseFIPS"],
@@ -3276,7 +3276,7 @@ util_endpoints_2.customEndpointFunctions.aws = util_endpoints_1.awsEndpointFunct
 
 /***/ }),
 
-/***/ 8090:
+/***/ 5509:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -3284,14 +3284,14 @@ util_endpoints_2.customEndpointFunctions.aws = util_endpoints_1.awsEndpointFunct
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ruleSet = void 0;
 const u = "required", v = "fn", w = "argv", x = "ref";
-const a = true, b = "isSet", c = "booleanEquals", d = "error", e = "endpoint", f = "tree", g = "PartitionResult", h = "getAttr", i = { [u]: false, "type": "string" }, j = { [u]: true, "default": false, "type": "boolean" }, k = { [x]: "Endpoint" }, l = { [v]: c, [w]: [{ [x]: "UseFIPS" }, true] }, m = { [v]: c, [w]: [{ [x]: "UseDualStack" }, true] }, n = {}, o = { [v]: h, [w]: [{ [x]: g }, "supportsFIPS"] }, p = { [x]: g }, q = { [v]: c, [w]: [true, { [v]: h, [w]: [p, "supportsDualStack"] }] }, r = [l], s = [m], t = [{ [x]: "Region" }];
-const _data = { version: "1.0", parameters: { Region: i, UseDualStack: j, UseFIPS: j, Endpoint: i }, rules: [{ conditions: [{ [v]: b, [w]: [k] }], rules: [{ conditions: r, error: "Invalid Configuration: FIPS and custom endpoint are not supported", type: d }, { conditions: s, error: "Invalid Configuration: Dualstack and custom endpoint are not supported", type: d }, { endpoint: { url: k, properties: n, headers: n }, type: e }], type: f }, { conditions: [{ [v]: b, [w]: t }], rules: [{ conditions: [{ [v]: "aws.partition", [w]: t, assign: g }], rules: [{ conditions: [l, m], rules: [{ conditions: [{ [v]: c, [w]: [a, o] }, q], rules: [{ endpoint: { url: "https://sqs-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n, headers: n }, type: e }], type: f }, { error: "FIPS and DualStack are enabled, but this partition does not support one or both", type: d }], type: f }, { conditions: r, rules: [{ conditions: [{ [v]: c, [w]: [o, a] }], rules: [{ conditions: [{ [v]: "stringEquals", [w]: [{ [v]: h, [w]: [p, "name"] }, "aws-us-gov"] }], endpoint: { url: "https://sqs.{Region}.amazonaws.com", properties: n, headers: n }, type: e }, { endpoint: { url: "https://sqs-fips.{Region}.{PartitionResult#dnsSuffix}", properties: n, headers: n }, type: e }], type: f }, { error: "FIPS is enabled but this partition does not support FIPS", type: d }], type: f }, { conditions: s, rules: [{ conditions: [q], rules: [{ endpoint: { url: "https://sqs.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n, headers: n }, type: e }], type: f }, { error: "DualStack is enabled but this partition does not support DualStack", type: d }], type: f }, { endpoint: { url: "https://sqs.{Region}.{PartitionResult#dnsSuffix}", properties: n, headers: n }, type: e }], type: f }], type: f }, { error: "Invalid Configuration: Missing Region", type: d }] };
+const a = true, b = "isSet", c = "booleanEquals", d = "error", e = "endpoint", f = "tree", g = "PartitionResult", h = "stringEquals", i = { [u]: false, "type": "string" }, j = { [u]: true, "default": false, "type": "boolean" }, k = { [x]: "Endpoint" }, l = { [v]: c, [w]: [{ [x]: "UseFIPS" }, true] }, m = { [v]: c, [w]: [{ [x]: "UseDualStack" }, true] }, n = {}, o = { [x]: "Region" }, p = { [v]: "getAttr", [w]: [{ [x]: g }, "supportsFIPS"] }, q = { [v]: c, [w]: [true, { [v]: "getAttr", [w]: [{ [x]: g }, "supportsDualStack"] }] }, r = [l], s = [m], t = [o];
+const _data = { version: "1.0", parameters: { Region: i, UseDualStack: j, UseFIPS: j, Endpoint: i }, rules: [{ conditions: [{ [v]: b, [w]: [k] }], rules: [{ conditions: r, error: "Invalid Configuration: FIPS and custom endpoint are not supported", type: d }, { conditions: s, error: "Invalid Configuration: Dualstack and custom endpoint are not supported", type: d }, { endpoint: { url: k, properties: n, headers: n }, type: e }], type: f }, { conditions: [{ [v]: b, [w]: t }], rules: [{ conditions: [{ [v]: "aws.partition", [w]: t, assign: g }], rules: [{ conditions: [l, m], rules: [{ conditions: [{ [v]: c, [w]: [a, p] }, q], rules: [{ endpoint: { url: "https://sns-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n, headers: n }, type: e }], type: f }, { error: "FIPS and DualStack are enabled, but this partition does not support one or both", type: d }], type: f }, { conditions: r, rules: [{ conditions: [{ [v]: c, [w]: [p, a] }], rules: [{ conditions: [{ [v]: h, [w]: [o, "us-gov-east-1"] }], endpoint: { url: "https://sns.us-gov-east-1.amazonaws.com", properties: n, headers: n }, type: e }, { conditions: [{ [v]: h, [w]: [o, "us-gov-west-1"] }], endpoint: { url: "https://sns.us-gov-west-1.amazonaws.com", properties: n, headers: n }, type: e }, { endpoint: { url: "https://sns-fips.{Region}.{PartitionResult#dnsSuffix}", properties: n, headers: n }, type: e }], type: f }, { error: "FIPS is enabled but this partition does not support FIPS", type: d }], type: f }, { conditions: s, rules: [{ conditions: [q], rules: [{ endpoint: { url: "https://sns.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n, headers: n }, type: e }], type: f }, { error: "DualStack is enabled but this partition does not support DualStack", type: d }], type: f }, { endpoint: { url: "https://sns.{Region}.{PartitionResult#dnsSuffix}", properties: n, headers: n }, type: e }], type: f }], type: f }, { error: "Invalid Configuration: Missing Region", type: d }] };
 exports.ruleSet = _data;
 
 
 /***/ }),
 
-/***/ 8868:
+/***/ 8797:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -3300,7 +3300,6 @@ exports.ruleSet = _data;
 var middlewareHostHeader = __nccwpck_require__(2590);
 var middlewareLogger = __nccwpck_require__(5242);
 var middlewareRecursionDetection = __nccwpck_require__(1568);
-var middlewareSdkSqs = __nccwpck_require__(2046);
 var middlewareUserAgent = __nccwpck_require__(2959);
 var configResolver = __nccwpck_require__(9316);
 var core = __nccwpck_require__(402);
@@ -3309,8 +3308,8 @@ var middlewareContentLength = __nccwpck_require__(7212);
 var middlewareEndpoint = __nccwpck_require__(99);
 var middlewareRetry = __nccwpck_require__(9618);
 var smithyClient = __nccwpck_require__(1411);
-var httpAuthSchemeProvider = __nccwpck_require__(9463);
-var runtimeConfig = __nccwpck_require__(6118);
+var httpAuthSchemeProvider = __nccwpck_require__(2078);
+var runtimeConfig = __nccwpck_require__(5559);
 var regionConfigResolver = __nccwpck_require__(6463);
 var protocolHttp = __nccwpck_require__(2356);
 
@@ -3318,7 +3317,7 @@ const resolveClientEndpointParameters = (options) => {
     return Object.assign(options, {
         useDualstackEndpoint: options.useDualstackEndpoint ?? false,
         useFipsEndpoint: options.useFipsEndpoint ?? false,
-        defaultSigningName: "sqs",
+        defaultSigningName: "sns",
     });
 };
 const commonParams = {
@@ -3373,7 +3372,7 @@ const resolveRuntimeExtensions = (runtimeConfig, extensions) => {
     return Object.assign(runtimeConfig, regionConfigResolver.resolveAwsRegionExtensionConfiguration(extensionConfiguration), smithyClient.resolveDefaultRuntimeConfig(extensionConfiguration), protocolHttp.resolveHttpHandlerRuntimeConfig(extensionConfiguration), resolveHttpAuthRuntimeConfig(extensionConfiguration));
 };
 
-class SQSClient extends smithyClient.Client {
+class SNSClient extends smithyClient.Client {
     config;
     constructor(...[configuration]) {
         const _config_0 = runtimeConfig.getRuntimeConfig(configuration || {});
@@ -3385,10 +3384,9 @@ class SQSClient extends smithyClient.Client {
         const _config_4 = configResolver.resolveRegionConfig(_config_3);
         const _config_5 = middlewareHostHeader.resolveHostHeaderConfig(_config_4);
         const _config_6 = middlewareEndpoint.resolveEndpointConfig(_config_5);
-        const _config_7 = middlewareSdkSqs.resolveQueueUrlConfig(_config_6);
-        const _config_8 = httpAuthSchemeProvider.resolveHttpAuthSchemeConfig(_config_7);
-        const _config_9 = resolveRuntimeExtensions(_config_8, configuration?.extensions || []);
-        this.config = _config_9;
+        const _config_7 = httpAuthSchemeProvider.resolveHttpAuthSchemeConfig(_config_6);
+        const _config_8 = resolveRuntimeExtensions(_config_7, configuration?.extensions || []);
+        this.config = _config_8;
         this.middlewareStack.use(schema.getSchemaSerdePlugin(this.config));
         this.middlewareStack.use(middlewareUserAgent.getUserAgentPlugin(this.config));
         this.middlewareStack.use(middlewareRetry.getRetryPlugin(this.config));
@@ -3396,9 +3394,8 @@ class SQSClient extends smithyClient.Client {
         this.middlewareStack.use(middlewareHostHeader.getHostHeaderPlugin(this.config));
         this.middlewareStack.use(middlewareLogger.getLoggerPlugin(this.config));
         this.middlewareStack.use(middlewareRecursionDetection.getRecursionDetectionPlugin(this.config));
-        this.middlewareStack.use(middlewareSdkSqs.getQueueUrlPlugin(this.config));
         this.middlewareStack.use(core.getHttpAuthSchemeEndpointRuleSetPlugin(this.config, {
-            httpAuthSchemeParametersProvider: httpAuthSchemeProvider.defaultSQSHttpAuthSchemeParametersProvider,
+            httpAuthSchemeParametersProvider: httpAuthSchemeProvider.defaultSNSHttpAuthSchemeParametersProvider,
             identityProviderConfigProvider: async (config) => new core.DefaultIdentityProviderConfig({
                 "aws.auth#sigv4": config.credentials,
             }),
@@ -3410,86 +3407,206 @@ class SQSClient extends smithyClient.Client {
     }
 }
 
-let SQSServiceException$1 = class SQSServiceException extends smithyClient.ServiceException {
+let SNSServiceException$1 = class SNSServiceException extends smithyClient.ServiceException {
     constructor(options) {
         super(options);
-        Object.setPrototypeOf(this, SQSServiceException.prototype);
+        Object.setPrototypeOf(this, SNSServiceException.prototype);
     }
 };
 
-let InvalidAddress$1 = class InvalidAddress extends SQSServiceException$1 {
-    name = "InvalidAddress";
+let AuthorizationErrorException$1 = class AuthorizationErrorException extends SNSServiceException$1 {
+    name = "AuthorizationErrorException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "InvalidAddress",
+            name: "AuthorizationErrorException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, InvalidAddress.prototype);
+        Object.setPrototypeOf(this, AuthorizationErrorException.prototype);
     }
 };
-let InvalidSecurity$1 = class InvalidSecurity extends SQSServiceException$1 {
-    name = "InvalidSecurity";
+let InternalErrorException$1 = class InternalErrorException extends SNSServiceException$1 {
+    name = "InternalErrorException";
+    $fault = "server";
+    constructor(opts) {
+        super({
+            name: "InternalErrorException",
+            $fault: "server",
+            ...opts,
+        });
+        Object.setPrototypeOf(this, InternalErrorException.prototype);
+    }
+};
+let InvalidParameterException$1 = class InvalidParameterException extends SNSServiceException$1 {
+    name = "InvalidParameterException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "InvalidSecurity",
+            name: "InvalidParameterException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, InvalidSecurity.prototype);
+        Object.setPrototypeOf(this, InvalidParameterException.prototype);
     }
 };
-let OverLimit$1 = class OverLimit extends SQSServiceException$1 {
-    name = "OverLimit";
+let NotFoundException$1 = class NotFoundException extends SNSServiceException$1 {
+    name = "NotFoundException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "OverLimit",
+            name: "NotFoundException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, OverLimit.prototype);
+        Object.setPrototypeOf(this, NotFoundException.prototype);
     }
 };
-let QueueDoesNotExist$1 = class QueueDoesNotExist extends SQSServiceException$1 {
-    name = "QueueDoesNotExist";
+let ThrottledException$1 = class ThrottledException extends SNSServiceException$1 {
+    name = "ThrottledException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "QueueDoesNotExist",
+            name: "ThrottledException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, QueueDoesNotExist.prototype);
+        Object.setPrototypeOf(this, ThrottledException.prototype);
     }
 };
-let RequestThrottled$1 = class RequestThrottled extends SQSServiceException$1 {
-    name = "RequestThrottled";
+let FilterPolicyLimitExceededException$1 = class FilterPolicyLimitExceededException extends SNSServiceException$1 {
+    name = "FilterPolicyLimitExceededException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "RequestThrottled",
+            name: "FilterPolicyLimitExceededException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, RequestThrottled.prototype);
+        Object.setPrototypeOf(this, FilterPolicyLimitExceededException.prototype);
     }
 };
-let UnsupportedOperation$1 = class UnsupportedOperation extends SQSServiceException$1 {
-    name = "UnsupportedOperation";
+let ReplayLimitExceededException$1 = class ReplayLimitExceededException extends SNSServiceException$1 {
+    name = "ReplayLimitExceededException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "UnsupportedOperation",
+            name: "ReplayLimitExceededException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, UnsupportedOperation.prototype);
+        Object.setPrototypeOf(this, ReplayLimitExceededException.prototype);
     }
 };
-let ResourceNotFoundException$1 = class ResourceNotFoundException extends SQSServiceException$1 {
+let SubscriptionLimitExceededException$1 = class SubscriptionLimitExceededException extends SNSServiceException$1 {
+    name = "SubscriptionLimitExceededException";
+    $fault = "client";
+    constructor(opts) {
+        super({
+            name: "SubscriptionLimitExceededException",
+            $fault: "client",
+            ...opts,
+        });
+        Object.setPrototypeOf(this, SubscriptionLimitExceededException.prototype);
+    }
+};
+let OptedOutException$1 = class OptedOutException extends SNSServiceException$1 {
+    name = "OptedOutException";
+    $fault = "client";
+    constructor(opts) {
+        super({
+            name: "OptedOutException",
+            $fault: "client",
+            ...opts,
+        });
+        Object.setPrototypeOf(this, OptedOutException.prototype);
+    }
+};
+let UserErrorException$1 = class UserErrorException extends SNSServiceException$1 {
+    name = "UserErrorException";
+    $fault = "client";
+    constructor(opts) {
+        super({
+            name: "UserErrorException",
+            $fault: "client",
+            ...opts,
+        });
+        Object.setPrototypeOf(this, UserErrorException.prototype);
+    }
+};
+let ConcurrentAccessException$1 = class ConcurrentAccessException extends SNSServiceException$1 {
+    name = "ConcurrentAccessException";
+    $fault = "client";
+    constructor(opts) {
+        super({
+            name: "ConcurrentAccessException",
+            $fault: "client",
+            ...opts,
+        });
+        Object.setPrototypeOf(this, ConcurrentAccessException.prototype);
+    }
+};
+let InvalidSecurityException$1 = class InvalidSecurityException extends SNSServiceException$1 {
+    name = "InvalidSecurityException";
+    $fault = "client";
+    constructor(opts) {
+        super({
+            name: "InvalidSecurityException",
+            $fault: "client",
+            ...opts,
+        });
+        Object.setPrototypeOf(this, InvalidSecurityException.prototype);
+    }
+};
+let StaleTagException$1 = class StaleTagException extends SNSServiceException$1 {
+    name = "StaleTagException";
+    $fault = "client";
+    constructor(opts) {
+        super({
+            name: "StaleTagException",
+            $fault: "client",
+            ...opts,
+        });
+        Object.setPrototypeOf(this, StaleTagException.prototype);
+    }
+};
+let TagLimitExceededException$1 = class TagLimitExceededException extends SNSServiceException$1 {
+    name = "TagLimitExceededException";
+    $fault = "client";
+    constructor(opts) {
+        super({
+            name: "TagLimitExceededException",
+            $fault: "client",
+            ...opts,
+        });
+        Object.setPrototypeOf(this, TagLimitExceededException.prototype);
+    }
+};
+let TagPolicyException$1 = class TagPolicyException extends SNSServiceException$1 {
+    name = "TagPolicyException";
+    $fault = "client";
+    constructor(opts) {
+        super({
+            name: "TagPolicyException",
+            $fault: "client",
+            ...opts,
+        });
+        Object.setPrototypeOf(this, TagPolicyException.prototype);
+    }
+};
+let TopicLimitExceededException$1 = class TopicLimitExceededException extends SNSServiceException$1 {
+    name = "TopicLimitExceededException";
+    $fault = "client";
+    constructor(opts) {
+        super({
+            name: "TopicLimitExceededException",
+            $fault: "client",
+            ...opts,
+        });
+        Object.setPrototypeOf(this, TopicLimitExceededException.prototype);
+    }
+};
+let ResourceNotFoundException$1 = class ResourceNotFoundException extends SNSServiceException$1 {
     name = "ResourceNotFoundException";
     $fault = "client";
     constructor(opts) {
@@ -3501,750 +3618,680 @@ let ResourceNotFoundException$1 = class ResourceNotFoundException extends SQSSer
         Object.setPrototypeOf(this, ResourceNotFoundException.prototype);
     }
 };
-let MessageNotInflight$1 = class MessageNotInflight extends SQSServiceException$1 {
-    name = "MessageNotInflight";
+let InvalidStateException$1 = class InvalidStateException extends SNSServiceException$1 {
+    name = "InvalidStateException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "MessageNotInflight",
+            name: "InvalidStateException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, MessageNotInflight.prototype);
+        Object.setPrototypeOf(this, InvalidStateException.prototype);
     }
 };
-let ReceiptHandleIsInvalid$1 = class ReceiptHandleIsInvalid extends SQSServiceException$1 {
-    name = "ReceiptHandleIsInvalid";
+let ValidationException$1 = class ValidationException extends SNSServiceException$1 {
+    name = "ValidationException";
     $fault = "client";
+    Message;
     constructor(opts) {
         super({
-            name: "ReceiptHandleIsInvalid",
+            name: "ValidationException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, ReceiptHandleIsInvalid.prototype);
+        Object.setPrototypeOf(this, ValidationException.prototype);
+        this.Message = opts.Message;
     }
 };
-let BatchEntryIdsNotDistinct$1 = class BatchEntryIdsNotDistinct extends SQSServiceException$1 {
-    name = "BatchEntryIdsNotDistinct";
+let EndpointDisabledException$1 = class EndpointDisabledException extends SNSServiceException$1 {
+    name = "EndpointDisabledException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "BatchEntryIdsNotDistinct",
+            name: "EndpointDisabledException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, BatchEntryIdsNotDistinct.prototype);
+        Object.setPrototypeOf(this, EndpointDisabledException.prototype);
     }
 };
-let EmptyBatchRequest$1 = class EmptyBatchRequest extends SQSServiceException$1 {
-    name = "EmptyBatchRequest";
+let InvalidParameterValueException$1 = class InvalidParameterValueException extends SNSServiceException$1 {
+    name = "InvalidParameterValueException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "EmptyBatchRequest",
+            name: "InvalidParameterValueException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, EmptyBatchRequest.prototype);
+        Object.setPrototypeOf(this, InvalidParameterValueException.prototype);
     }
 };
-let InvalidBatchEntryId$1 = class InvalidBatchEntryId extends SQSServiceException$1 {
-    name = "InvalidBatchEntryId";
+let KMSAccessDeniedException$1 = class KMSAccessDeniedException extends SNSServiceException$1 {
+    name = "KMSAccessDeniedException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "InvalidBatchEntryId",
+            name: "KMSAccessDeniedException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, InvalidBatchEntryId.prototype);
+        Object.setPrototypeOf(this, KMSAccessDeniedException.prototype);
     }
 };
-let TooManyEntriesInBatchRequest$1 = class TooManyEntriesInBatchRequest extends SQSServiceException$1 {
-    name = "TooManyEntriesInBatchRequest";
+let KMSDisabledException$1 = class KMSDisabledException extends SNSServiceException$1 {
+    name = "KMSDisabledException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "TooManyEntriesInBatchRequest",
+            name: "KMSDisabledException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, TooManyEntriesInBatchRequest.prototype);
+        Object.setPrototypeOf(this, KMSDisabledException.prototype);
     }
 };
-let InvalidAttributeName$1 = class InvalidAttributeName extends SQSServiceException$1 {
-    name = "InvalidAttributeName";
+let KMSInvalidStateException$1 = class KMSInvalidStateException extends SNSServiceException$1 {
+    name = "KMSInvalidStateException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "InvalidAttributeName",
+            name: "KMSInvalidStateException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, InvalidAttributeName.prototype);
+        Object.setPrototypeOf(this, KMSInvalidStateException.prototype);
     }
 };
-let InvalidAttributeValue$1 = class InvalidAttributeValue extends SQSServiceException$1 {
-    name = "InvalidAttributeValue";
+let KMSNotFoundException$1 = class KMSNotFoundException extends SNSServiceException$1 {
+    name = "KMSNotFoundException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "InvalidAttributeValue",
+            name: "KMSNotFoundException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, InvalidAttributeValue.prototype);
+        Object.setPrototypeOf(this, KMSNotFoundException.prototype);
     }
 };
-let QueueDeletedRecently$1 = class QueueDeletedRecently extends SQSServiceException$1 {
-    name = "QueueDeletedRecently";
+let KMSOptInRequired$1 = class KMSOptInRequired extends SNSServiceException$1 {
+    name = "KMSOptInRequired";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "QueueDeletedRecently",
+            name: "KMSOptInRequired",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, QueueDeletedRecently.prototype);
+        Object.setPrototypeOf(this, KMSOptInRequired.prototype);
     }
 };
-let QueueNameExists$1 = class QueueNameExists extends SQSServiceException$1 {
-    name = "QueueNameExists";
+let KMSThrottlingException$1 = class KMSThrottlingException extends SNSServiceException$1 {
+    name = "KMSThrottlingException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "QueueNameExists",
+            name: "KMSThrottlingException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, QueueNameExists.prototype);
+        Object.setPrototypeOf(this, KMSThrottlingException.prototype);
     }
 };
-let InvalidIdFormat$1 = class InvalidIdFormat extends SQSServiceException$1 {
-    name = "InvalidIdFormat";
+let PlatformApplicationDisabledException$1 = class PlatformApplicationDisabledException extends SNSServiceException$1 {
+    name = "PlatformApplicationDisabledException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "InvalidIdFormat",
+            name: "PlatformApplicationDisabledException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, InvalidIdFormat.prototype);
+        Object.setPrototypeOf(this, PlatformApplicationDisabledException.prototype);
     }
 };
-let PurgeQueueInProgress$1 = class PurgeQueueInProgress extends SQSServiceException$1 {
-    name = "PurgeQueueInProgress";
+let BatchEntryIdsNotDistinctException$1 = class BatchEntryIdsNotDistinctException extends SNSServiceException$1 {
+    name = "BatchEntryIdsNotDistinctException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "PurgeQueueInProgress",
+            name: "BatchEntryIdsNotDistinctException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, PurgeQueueInProgress.prototype);
+        Object.setPrototypeOf(this, BatchEntryIdsNotDistinctException.prototype);
     }
 };
-let KmsAccessDenied$1 = class KmsAccessDenied extends SQSServiceException$1 {
-    name = "KmsAccessDenied";
+let BatchRequestTooLongException$1 = class BatchRequestTooLongException extends SNSServiceException$1 {
+    name = "BatchRequestTooLongException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "KmsAccessDenied",
+            name: "BatchRequestTooLongException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, KmsAccessDenied.prototype);
+        Object.setPrototypeOf(this, BatchRequestTooLongException.prototype);
     }
 };
-let KmsDisabled$1 = class KmsDisabled extends SQSServiceException$1 {
-    name = "KmsDisabled";
+let EmptyBatchRequestException$1 = class EmptyBatchRequestException extends SNSServiceException$1 {
+    name = "EmptyBatchRequestException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "KmsDisabled",
+            name: "EmptyBatchRequestException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, KmsDisabled.prototype);
+        Object.setPrototypeOf(this, EmptyBatchRequestException.prototype);
     }
 };
-let KmsInvalidKeyUsage$1 = class KmsInvalidKeyUsage extends SQSServiceException$1 {
-    name = "KmsInvalidKeyUsage";
+let InvalidBatchEntryIdException$1 = class InvalidBatchEntryIdException extends SNSServiceException$1 {
+    name = "InvalidBatchEntryIdException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "KmsInvalidKeyUsage",
+            name: "InvalidBatchEntryIdException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, KmsInvalidKeyUsage.prototype);
+        Object.setPrototypeOf(this, InvalidBatchEntryIdException.prototype);
     }
 };
-let KmsInvalidState$1 = class KmsInvalidState extends SQSServiceException$1 {
-    name = "KmsInvalidState";
+let TooManyEntriesInBatchRequestException$1 = class TooManyEntriesInBatchRequestException extends SNSServiceException$1 {
+    name = "TooManyEntriesInBatchRequestException";
     $fault = "client";
     constructor(opts) {
         super({
-            name: "KmsInvalidState",
+            name: "TooManyEntriesInBatchRequestException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, KmsInvalidState.prototype);
+        Object.setPrototypeOf(this, TooManyEntriesInBatchRequestException.prototype);
     }
 };
-let KmsNotFound$1 = class KmsNotFound extends SQSServiceException$1 {
-    name = "KmsNotFound";
+let VerificationException$1 = class VerificationException extends SNSServiceException$1 {
+    name = "VerificationException";
     $fault = "client";
+    Message;
+    Status;
     constructor(opts) {
         super({
-            name: "KmsNotFound",
+            name: "VerificationException",
             $fault: "client",
             ...opts,
         });
-        Object.setPrototypeOf(this, KmsNotFound.prototype);
-    }
-};
-let KmsOptInRequired$1 = class KmsOptInRequired extends SQSServiceException$1 {
-    name = "KmsOptInRequired";
-    $fault = "client";
-    constructor(opts) {
-        super({
-            name: "KmsOptInRequired",
-            $fault: "client",
-            ...opts,
-        });
-        Object.setPrototypeOf(this, KmsOptInRequired.prototype);
-    }
-};
-let KmsThrottled$1 = class KmsThrottled extends SQSServiceException$1 {
-    name = "KmsThrottled";
-    $fault = "client";
-    constructor(opts) {
-        super({
-            name: "KmsThrottled",
-            $fault: "client",
-            ...opts,
-        });
-        Object.setPrototypeOf(this, KmsThrottled.prototype);
-    }
-};
-let InvalidMessageContents$1 = class InvalidMessageContents extends SQSServiceException$1 {
-    name = "InvalidMessageContents";
-    $fault = "client";
-    constructor(opts) {
-        super({
-            name: "InvalidMessageContents",
-            $fault: "client",
-            ...opts,
-        });
-        Object.setPrototypeOf(this, InvalidMessageContents.prototype);
-    }
-};
-let BatchRequestTooLong$1 = class BatchRequestTooLong extends SQSServiceException$1 {
-    name = "BatchRequestTooLong";
-    $fault = "client";
-    constructor(opts) {
-        super({
-            name: "BatchRequestTooLong",
-            $fault: "client",
-            ...opts,
-        });
-        Object.setPrototypeOf(this, BatchRequestTooLong.prototype);
+        Object.setPrototypeOf(this, VerificationException.prototype);
+        this.Message = opts.Message;
+        this.Status = opts.Status;
     }
 };
 
-const _A = "Actions";
+const _A = "Attributes";
+const _AEE = "AuthorizationErrorException";
 const _AN = "ActionName";
-const _ANOMM = "ApproximateNumberOfMessagesMoved";
-const _ANOMTM = "ApproximateNumberOfMessagesToMove";
-const _ANt = "AttributeNames";
-const _ANtt = "AttributeName";
+const _ANt = "AttributeName";
+const _AOU = "AuthenticateOnUnsubscribe";
 const _AP = "AddPermission";
-const _APR = "AddPermissionRequest";
-const _AWSAI = "AWSAccountIds";
-const _AWSAIc = "AWSAccountId";
-const _At = "Attributes";
-const _Att = "Attribute";
-const _B = "Body";
-const _BEIND = "BatchEntryIdsNotDistinct";
-const _BL = "BinaryList";
-const _BLV = "BinaryListValues";
-const _BLVi = "BinaryListValue";
+const _API = "AddPermissionInput";
+const _AV = "AttributeValue";
+const _AWSAI = "AWSAccountId";
+const _BEINDE = "BatchEntryIdsNotDistinctException";
 const _BREE = "BatchResultErrorEntry";
 const _BREEL = "BatchResultErrorEntryList";
-const _BRTL = "BatchRequestTooLong";
+const _BRTLE = "BatchRequestTooLongException";
 const _BV = "BinaryValue";
 const _C = "Code";
-const _CMMT = "CancelMessageMoveTask";
-const _CMMTR = "CancelMessageMoveTaskRequest";
-const _CMMTRa = "CancelMessageMoveTaskResult";
-const _CMV = "ChangeMessageVisibility";
-const _CMVB = "ChangeMessageVisibilityBatch";
-const _CMVBR = "ChangeMessageVisibilityBatchRequest";
-const _CMVBRE = "ChangeMessageVisibilityBatchRequestEntry";
-const _CMVBREL = "ChangeMessageVisibilityBatchRequestEntryList";
-const _CMVBRELh = "ChangeMessageVisibilityBatchResultEntryList";
-const _CMVBREh = "ChangeMessageVisibilityBatchResultEntry";
-const _CMVBRh = "ChangeMessageVisibilityBatchResult";
-const _CMVR = "ChangeMessageVisibilityRequest";
-const _CQ = "CreateQueue";
-const _CQR = "CreateQueueRequest";
-const _CQRr = "CreateQueueResult";
-const _DA = "DestinationArn";
-const _DM = "DeleteMessage";
-const _DMB = "DeleteMessageBatch";
-const _DMBR = "DeleteMessageBatchRequest";
-const _DMBRE = "DeleteMessageBatchRequestEntry";
-const _DMBREL = "DeleteMessageBatchRequestEntryList";
-const _DMBRELe = "DeleteMessageBatchResultEntryList";
-const _DMBREe = "DeleteMessageBatchResultEntry";
-const _DMBRe = "DeleteMessageBatchResult";
-const _DMR = "DeleteMessageRequest";
-const _DQ = "DeleteQueue";
-const _DQR = "DeleteQueueRequest";
-const _DS = "DelaySeconds";
+const _CA = "CreatedAt";
+const _CAE = "ConcurrentAccessException";
+const _CER = "CreateEndpointResponse";
+const _CIPNIOO = "CheckIfPhoneNumberIsOptedOut";
+const _CIPNIOOI = "CheckIfPhoneNumberIsOptedOutInput";
+const _CIPNIOOR = "CheckIfPhoneNumberIsOptedOutResponse";
+const _CPA = "CreatePlatformApplication";
+const _CPAI = "CreatePlatformApplicationInput";
+const _CPAR = "CreatePlatformApplicationResponse";
+const _CPE = "CreatePlatformEndpoint";
+const _CPEI = "CreatePlatformEndpointInput";
+const _CS = "ConfirmSubscription";
+const _CSI = "ConfirmSubscriptionInput";
+const _CSMSSPN = "CreateSMSSandboxPhoneNumber";
+const _CSMSSPNI = "CreateSMSSandboxPhoneNumberInput";
+const _CSMSSPNR = "CreateSMSSandboxPhoneNumberResult";
+const _CSR = "ConfirmSubscriptionResponse";
+const _CT = "CreateTopic";
+const _CTI = "CreateTopicInput";
+const _CTR = "CreateTopicResponse";
+const _CUD = "CustomUserData";
+const _DE = "DeleteEndpoint";
+const _DEI = "DeleteEndpointInput";
+const _DPA = "DeletePlatformApplication";
+const _DPAI = "DeletePlatformApplicationInput";
+const _DPP = "DataProtectionPolicy";
+const _DSMSSPN = "DeleteSMSSandboxPhoneNumber";
+const _DSMSSPNI = "DeleteSMSSandboxPhoneNumberInput";
+const _DSMSSPNR = "DeleteSMSSandboxPhoneNumberResult";
 const _DT = "DataType";
-const _E = "Entries";
-const _EBR = "EmptyBatchRequest";
+const _DTI = "DeleteTopicInput";
+const _DTe = "DeleteTopic";
+const _E = "Endpoint";
+const _EA = "EndpointArn";
+const _EBRE = "EmptyBatchRequestException";
+const _EDE = "EndpointDisabledException";
+const _En = "Endpoints";
 const _F = "Failed";
-const _FR = "FailureReason";
-const _GQA = "GetQueueAttributes";
-const _GQAR = "GetQueueAttributesRequest";
-const _GQARe = "GetQueueAttributesResult";
-const _GQU = "GetQueueUrl";
-const _GQUR = "GetQueueUrlRequest";
-const _GQURe = "GetQueueUrlResult";
+const _FPLEE = "FilterPolicyLimitExceededException";
+const _GDPP = "GetDataProtectionPolicy";
+const _GDPPI = "GetDataProtectionPolicyInput";
+const _GDPPR = "GetDataProtectionPolicyResponse";
+const _GEA = "GetEndpointAttributes";
+const _GEAI = "GetEndpointAttributesInput";
+const _GEAR = "GetEndpointAttributesResponse";
+const _GPAA = "GetPlatformApplicationAttributes";
+const _GPAAI = "GetPlatformApplicationAttributesInput";
+const _GPAAR = "GetPlatformApplicationAttributesResponse";
+const _GSA = "GetSubscriptionAttributes";
+const _GSAI = "GetSubscriptionAttributesInput";
+const _GSAR = "GetSubscriptionAttributesResponse";
+const _GSMSA = "GetSMSAttributes";
+const _GSMSAI = "GetSMSAttributesInput";
+const _GSMSAR = "GetSMSAttributesResponse";
+const _GSMSSAS = "GetSMSSandboxAccountStatus";
+const _GSMSSASI = "GetSMSSandboxAccountStatusInput";
+const _GSMSSASR = "GetSMSSandboxAccountStatusResult";
+const _GTA = "GetTopicAttributes";
+const _GTAI = "GetTopicAttributesInput";
+const _GTAR = "GetTopicAttributesResponse";
 const _I = "Id";
-const _IA = "InvalidAddress";
-const _IAN = "InvalidAttributeName";
-const _IAV = "InvalidAttributeValue";
-const _IBEI = "InvalidBatchEntryId";
-const _IIF = "InvalidIdFormat";
-const _IMC = "InvalidMessageContents";
-const _IS = "InvalidSecurity";
+const _IBEIE = "InvalidBatchEntryIdException";
+const _ICC = "Iso2CountryCode";
+const _IEE = "InternalErrorException";
+const _IIS = "IsInSandbox";
+const _IPE = "InvalidParameterException";
+const _IPVE = "InvalidParameterValueException";
+const _ISE = "InvalidSecurityException";
+const _ISEn = "InvalidStateException";
 const _K = "Key";
-const _KAD = "KmsAccessDenied";
-const _KD = "KmsDisabled";
-const _KIKU = "KmsInvalidKeyUsage";
-const _KIS = "KmsInvalidState";
-const _KNF = "KmsNotFound";
-const _KOIR = "KmsOptInRequired";
-const _KT = "KmsThrottled";
+const _KMSADE = "KMSAccessDeniedException";
+const _KMSDE = "KMSDisabledException";
+const _KMSISE = "KMSInvalidStateException";
+const _KMSNFE = "KMSNotFoundException";
+const _KMSOIR = "KMSOptInRequired";
+const _KMSTE = "KMSThrottlingException";
 const _L = "Label";
-const _LDLSQ = "ListDeadLetterSourceQueues";
-const _LDLSQR = "ListDeadLetterSourceQueuesRequest";
-const _LDLSQRi = "ListDeadLetterSourceQueuesResult";
-const _LMMT = "ListMessageMoveTasks";
-const _LMMTR = "ListMessageMoveTasksRequest";
-const _LMMTRE = "ListMessageMoveTasksResultEntry";
-const _LMMTREL = "ListMessageMoveTasksResultEntryList";
-const _LMMTRi = "ListMessageMoveTasksResult";
-const _LQ = "ListQueues";
-const _LQR = "ListQueuesRequest";
-const _LQRi = "ListQueuesResult";
-const _LQT = "ListQueueTags";
-const _LQTR = "ListQueueTagsRequest";
-const _LQTRi = "ListQueueTagsResult";
+const _LC = "LanguageCode";
+const _LEBPA = "ListEndpointsByPlatformApplication";
+const _LEBPAI = "ListEndpointsByPlatformApplicationInput";
+const _LEBPAR = "ListEndpointsByPlatformApplicationResponse";
+const _LOE = "ListOfEndpoints";
+const _LON = "ListOriginationNumbers";
+const _LONR = "ListOriginationNumbersRequest";
+const _LONRi = "ListOriginationNumbersResult";
+const _LOPA = "ListOfPlatformApplications";
+const _LPA = "ListPlatformApplications";
+const _LPAI = "ListPlatformApplicationsInput";
+const _LPAR = "ListPlatformApplicationsResponse";
+const _LPNOO = "ListPhoneNumbersOptedOut";
+const _LPNOOI = "ListPhoneNumbersOptedOutInput";
+const _LPNOOR = "ListPhoneNumbersOptedOutResponse";
+const _LS = "ListSubscriptions";
+const _LSBT = "ListSubscriptionsByTopic";
+const _LSBTI = "ListSubscriptionsByTopicInput";
+const _LSBTR = "ListSubscriptionsByTopicResponse";
+const _LSI = "ListSubscriptionsInput";
+const _LSMSSPN = "ListSMSSandboxPhoneNumbers";
+const _LSMSSPNI = "ListSMSSandboxPhoneNumbersInput";
+const _LSMSSPNR = "ListSMSSandboxPhoneNumbersResult";
+const _LSR = "ListSubscriptionsResponse";
+const _LT = "ListTopics";
+const _LTFR = "ListTagsForResource";
+const _LTFRR = "ListTagsForResourceRequest";
+const _LTFRRi = "ListTagsForResourceResponse";
+const _LTI = "ListTopicsInput";
+const _LTR = "ListTopicsResponse";
 const _M = "Message";
 const _MA = "MessageAttributes";
-const _MAN = "MessageAttributeNames";
-const _MANe = "MessageAttributeName";
+const _MAM = "MessageAttributeMap";
 const _MAV = "MessageAttributeValue";
-const _MAe = "MessageAttribute";
-const _MB = "MessageBody";
-const _MBAM = "MessageBodyAttributeMap";
-const _MBSAM = "MessageBodySystemAttributeMap";
 const _MDI = "MessageDeduplicationId";
-const _MDOB = "MD5OfBody";
-const _MDOMA = "MD5OfMessageAttributes";
-const _MDOMB = "MD5OfMessageBody";
-const _MDOMSA = "MD5OfMessageSystemAttributes";
 const _MGI = "MessageGroupId";
 const _MI = "MessageId";
-const _ML = "MessageList";
-const _MNI = "MessageNotInflight";
-const _MNOM = "MaxNumberOfMessages";
-const _MNOMPS = "MaxNumberOfMessagesPerSecond";
 const _MR = "MaxResults";
-const _MSA = "MessageSystemAttributes";
-const _MSAM = "MessageSystemAttributeMap";
-const _MSAN = "MessageSystemAttributeNames";
-const _MSAV = "MessageSystemAttributeValue";
-const _MSAe = "MessageSystemAttribute";
-const _Me = "Messages";
+const _MS = "MessageStructure";
 const _N = "Name";
+const _NC = "NumberCapabilities";
+const _NFE = "NotFoundException";
 const _NT = "NextToken";
-const _OL = "OverLimit";
-const _PQ = "PurgeQueue";
-const _PQIP = "PurgeQueueInProgress";
-const _PQR = "PurgeQueueRequest";
-const _QAM = "QueueAttributeMap";
-const _QDNE = "QueueDoesNotExist";
-const _QDR = "QueueDeletedRecently";
-const _QN = "QueueName";
-const _QNE = "QueueNameExists";
-const _QNP = "QueueNamePrefix";
-const _QOAWSAI = "QueueOwnerAWSAccountId";
-const _QU = "QueueUrl";
-const _QUu = "QueueUrls";
-const _R = "Results";
-const _RH = "ReceiptHandle";
-const _RHII = "ReceiptHandleIsInvalid";
-const _RM = "ReceiveMessage";
-const _RMR = "ReceiveMessageRequest";
-const _RMRe = "ReceiveMessageResult";
+const _O = "Owner";
+const _OIPN = "OptInPhoneNumber";
+const _OIPNI = "OptInPhoneNumberInput";
+const _OIPNR = "OptInPhoneNumberResponse";
+const _OOE = "OptedOutException";
+const _OTP = "OneTimePassword";
+const _P = "Platform";
+const _PA = "PlatformApplications";
+const _PAA = "PlatformApplicationArn";
+const _PADE = "PlatformApplicationDisabledException";
+const _PAl = "PlatformApplication";
+const _PB = "PublishBatch";
+const _PBI = "PublishBatchInput";
+const _PBR = "PublishBatchResponse";
+const _PBRE = "PublishBatchRequestEntries";
+const _PBREL = "PublishBatchRequestEntryList";
+const _PBRELu = "PublishBatchResultEntryList";
+const _PBREu = "PublishBatchRequestEntry";
+const _PBREub = "PublishBatchResultEntry";
+const _PDPP = "PutDataProtectionPolicy";
+const _PDPPI = "PutDataProtectionPolicyInput";
+const _PI = "PublishInput";
+const _PN = "PhoneNumber";
+const _PNI = "PhoneNumberInformation";
+const _PNIL = "PhoneNumberInformationList";
+const _PNL = "PhoneNumberList";
+const _PNS = "PhoneNumberString";
+const _PNh = "PhoneNumbers";
+const _PR = "PublishResponse";
+const _Pr = "Protocol";
+const _Pu = "Publish";
+const _RA = "ResourceArn";
+const _RLEE = "ReplayLimitExceededException";
 const _RNFE = "ResourceNotFoundException";
 const _RP = "RemovePermission";
-const _RPR = "RemovePermissionRequest";
-const _RRAI = "ReceiveRequestAttemptId";
-const _RT = "RequestThrottled";
-const _S = "Successful";
-const _SA = "SourceArn";
+const _RPI = "RemovePermissionInput";
+const _RSA = "ReturnSubscriptionArn";
+const _RT = "RouteType";
+const _S = "Subscriptions";
+const _SA = "SubscriptionArn";
+const _SEA = "SetEndpointAttributes";
+const _SEAI = "SetEndpointAttributesInput";
 const _SF = "SenderFault";
-const _SL = "StringList";
-const _SLV = "StringListValues";
-const _SLVt = "StringListValue";
-const _SM = "SendMessage";
-const _SMB = "SendMessageBatch";
-const _SMBR = "SendMessageBatchRequest";
-const _SMBRE = "SendMessageBatchRequestEntry";
-const _SMBREL = "SendMessageBatchRequestEntryList";
-const _SMBRELe = "SendMessageBatchResultEntryList";
-const _SMBREe = "SendMessageBatchResultEntry";
-const _SMBRe = "SendMessageBatchResult";
-const _SMMT = "StartMessageMoveTask";
-const _SMMTR = "StartMessageMoveTaskRequest";
-const _SMMTRt = "StartMessageMoveTaskResult";
-const _SMR = "SendMessageRequest";
-const _SMRe = "SendMessageResult";
+const _SI = "SubscribeInput";
+const _SL = "SubscriptionsList";
+const _SLEE = "SubscriptionLimitExceededException";
+const _SMSSPN = "SMSSandboxPhoneNumber";
+const _SMSSPNL = "SMSSandboxPhoneNumberList";
 const _SN = "SequenceNumber";
-const _SQA = "SetQueueAttributes";
-const _SQAR = "SetQueueAttributesRequest";
-const _ST = "StartedTimestamp";
+const _SPAA = "SetPlatformApplicationAttributes";
+const _SPAAI = "SetPlatformApplicationAttributesInput";
+const _SR = "SubscribeResponse";
+const _SSA = "SetSubscriptionAttributes";
+const _SSAI = "SetSubscriptionAttributesInput";
+const _SSMSA = "SetSMSAttributes";
+const _SSMSAI = "SetSMSAttributesInput";
+const _SSMSAR = "SetSMSAttributesResponse";
+const _STA = "SetTopicAttributes";
+const _STAI = "SetTopicAttributesInput";
+const _STE = "StaleTagException";
 const _SV = "StringValue";
 const _St = "Status";
-const _T = "Tag";
-const _TH = "TaskHandle";
+const _Su = "Subject";
+const _Sub = "Subscription";
+const _Subs = "Subscribe";
+const _Suc = "Successful";
+const _T = "Token";
+const _TA = "TopicArn";
+const _TAa = "TargetArn";
+const _TE = "ThrottledException";
 const _TK = "TagKeys";
-const _TKa = "TagKey";
-const _TM = "TagMap";
-const _TMEIBR = "TooManyEntriesInBatchRequest";
-const _TQ = "TagQueue";
-const _TQR = "TagQueueRequest";
+const _TL = "TagList";
+const _TLEE = "TagLimitExceededException";
+const _TLEEo = "TopicLimitExceededException";
+const _TLo = "TopicsList";
+const _TMEIBRE = "TooManyEntriesInBatchRequestException";
+const _TPE = "TagPolicyException";
+const _TR = "TagResource";
+const _TRR = "TagResourceRequest";
+const _TRRa = "TagResourceResponse";
 const _Ta = "Tags";
-const _UO = "UnsupportedOperation";
-const _UQ = "UntagQueue";
-const _UQR = "UntagQueueRequest";
+const _Tag = "Tag";
+const _To = "Topics";
+const _Top = "Topic";
+const _U = "Unsubscribe";
+const _UEE = "UserErrorException";
+const _UI = "UnsubscribeInput";
+const _UR = "UntagResource";
+const _URR = "UntagResourceRequest";
+const _URRn = "UntagResourceResponse";
 const _V = "Value";
-const _VT = "VisibilityTimeout";
-const _WTS = "WaitTimeSeconds";
+const _VE = "ValidationException";
+const _VEe = "VerificationException";
+const _VSMSSPN = "VerifySMSSandboxPhoneNumber";
+const _VSMSSPNI = "VerifySMSSandboxPhoneNumberInput";
+const _VSMSSPNR = "VerifySMSSandboxPhoneNumberResult";
+const _a = "attributes";
 const _aQE = "awsQueryError";
 const _c = "client";
 const _e = "error";
 const _hE = "httpError";
+const _iOO = "isOptedOut";
 const _m = "message";
-const _qU = "queueUrls";
-const _s = "smithy.ts.sdk.synthetic.com.amazonaws.sqs";
-const _t = "tags";
-const _xF = "xmlFlattened";
+const _nT = "nextToken";
+const _pN = "phoneNumber";
+const _pNh = "phoneNumbers";
+const _s = "server";
+const _sm = "smithy.ts.sdk.synthetic.com.amazonaws.sns";
 const _xN = "xmlName";
-const n0 = "com.amazonaws.sqs";
-var AddPermissionRequest = [
-    3,
-    n0,
-    _APR,
-    0,
-    [_QU, _L, _AWSAI, _A],
-    [
-        0,
-        0,
-        [
-            64 | 0,
-            {
-                [_xN]: _AWSAIc,
-                [_xF]: 1,
-            },
-        ],
-        [
-            64 | 0,
-            {
-                [_xN]: _AN,
-                [_xF]: 1,
-            },
-        ],
-    ],
-];
-var BatchEntryIdsNotDistinct = [
+const n0 = "com.amazonaws.sns";
+var PhoneNumber = [0, n0, _PN, 8, 0];
+var PhoneNumberString = [0, n0, _PNS, 8, 0];
+var AddPermissionInput = [3, n0, _API, 0, [_TA, _L, _AWSAI, _AN], [0, 0, 64 | 0, 64 | 0]];
+var AuthorizationErrorException = [
     -3,
     n0,
-    _BEIND,
+    _AEE,
+    {
+        [_e]: _c,
+        [_hE]: 403,
+        [_aQE]: [`AuthorizationError`, 403],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(AuthorizationErrorException, AuthorizationErrorException$1);
+var BatchEntryIdsNotDistinctException = [
+    -3,
+    n0,
+    _BEINDE,
     {
         [_e]: _c,
         [_hE]: 400,
-        [_aQE]: [`AWS.SimpleQueueService.BatchEntryIdsNotDistinct`, 400],
+        [_aQE]: [`BatchEntryIdsNotDistinct`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(BatchEntryIdsNotDistinct, BatchEntryIdsNotDistinct$1);
-var BatchRequestTooLong = [
+schema.TypeRegistry.for(n0).registerError(BatchEntryIdsNotDistinctException, BatchEntryIdsNotDistinctException$1);
+var BatchRequestTooLongException = [
     -3,
     n0,
-    _BRTL,
+    _BRTLE,
     {
         [_e]: _c,
         [_hE]: 400,
-        [_aQE]: [`AWS.SimpleQueueService.BatchRequestTooLong`, 400],
+        [_aQE]: [`BatchRequestTooLong`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(BatchRequestTooLong, BatchRequestTooLong$1);
-var BatchResultErrorEntry = [3, n0, _BREE, 0, [_I, _SF, _C, _M], [0, 2, 0, 0]];
-var CancelMessageMoveTaskRequest = [3, n0, _CMMTR, 0, [_TH], [0]];
-var CancelMessageMoveTaskResult = [3, n0, _CMMTRa, 0, [_ANOMM], [1]];
-var ChangeMessageVisibilityBatchRequest = [
+schema.TypeRegistry.for(n0).registerError(BatchRequestTooLongException, BatchRequestTooLongException$1);
+var BatchResultErrorEntry = [3, n0, _BREE, 0, [_I, _C, _M, _SF], [0, 0, 0, 2]];
+var CheckIfPhoneNumberIsOptedOutInput = [
     3,
     n0,
-    _CMVBR,
+    _CIPNIOOI,
     0,
-    [_QU, _E],
-    [
-        0,
-        [
-            () => ChangeMessageVisibilityBatchRequestEntryList,
-            {
-                [_xN]: _CMVBRE,
-                [_xF]: 1,
-            },
-        ],
-    ],
+    [_pN],
+    [[() => PhoneNumber, 0]],
 ];
-var ChangeMessageVisibilityBatchRequestEntry = [
-    3,
-    n0,
-    _CMVBRE,
-    0,
-    [_I, _RH, _VT],
-    [0, 0, 1],
-];
-var ChangeMessageVisibilityBatchResult = [
-    3,
-    n0,
-    _CMVBRh,
-    0,
-    [_S, _F],
-    [
-        [
-            () => ChangeMessageVisibilityBatchResultEntryList,
-            {
-                [_xN]: _CMVBREh,
-                [_xF]: 1,
-            },
-        ],
-        [
-            () => BatchResultErrorEntryList,
-            {
-                [_xN]: _BREE,
-                [_xF]: 1,
-            },
-        ],
-    ],
-];
-var ChangeMessageVisibilityBatchResultEntry = [3, n0, _CMVBREh, 0, [_I], [0]];
-var ChangeMessageVisibilityRequest = [3, n0, _CMVR, 0, [_QU, _RH, _VT], [0, 0, 1]];
-var CreateQueueRequest = [
-    3,
-    n0,
-    _CQR,
-    0,
-    [_QN, _At, _t],
-    [
-        0,
-        [
-            () => QueueAttributeMap,
-            {
-                [_xN]: _Att,
-                [_xF]: 1,
-            },
-        ],
-        [
-            () => TagMap,
-            {
-                [_xN]: _T,
-                [_xF]: 1,
-            },
-        ],
-    ],
-];
-var CreateQueueResult = [3, n0, _CQRr, 0, [_QU], [0]];
-var DeleteMessageBatchRequest = [
-    3,
-    n0,
-    _DMBR,
-    0,
-    [_QU, _E],
-    [
-        0,
-        [
-            () => DeleteMessageBatchRequestEntryList,
-            {
-                [_xN]: _DMBRE,
-                [_xF]: 1,
-            },
-        ],
-    ],
-];
-var DeleteMessageBatchRequestEntry = [3, n0, _DMBRE, 0, [_I, _RH], [0, 0]];
-var DeleteMessageBatchResult = [
-    3,
-    n0,
-    _DMBRe,
-    0,
-    [_S, _F],
-    [
-        [
-            () => DeleteMessageBatchResultEntryList,
-            {
-                [_xN]: _DMBREe,
-                [_xF]: 1,
-            },
-        ],
-        [
-            () => BatchResultErrorEntryList,
-            {
-                [_xN]: _BREE,
-                [_xF]: 1,
-            },
-        ],
-    ],
-];
-var DeleteMessageBatchResultEntry = [3, n0, _DMBREe, 0, [_I], [0]];
-var DeleteMessageRequest = [3, n0, _DMR, 0, [_QU, _RH], [0, 0]];
-var DeleteQueueRequest = [3, n0, _DQR, 0, [_QU], [0]];
-var EmptyBatchRequest = [
+var CheckIfPhoneNumberIsOptedOutResponse = [3, n0, _CIPNIOOR, 0, [_iOO], [2]];
+var ConcurrentAccessException = [
     -3,
     n0,
-    _EBR,
+    _CAE,
     {
         [_e]: _c,
         [_hE]: 400,
-        [_aQE]: [`AWS.SimpleQueueService.EmptyBatchRequest`, 400],
+        [_aQE]: [`ConcurrentAccess`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(EmptyBatchRequest, EmptyBatchRequest$1);
-var GetQueueAttributesRequest = [
+schema.TypeRegistry.for(n0).registerError(ConcurrentAccessException, ConcurrentAccessException$1);
+var ConfirmSubscriptionInput = [3, n0, _CSI, 0, [_TA, _T, _AOU], [0, 0, 0]];
+var ConfirmSubscriptionResponse = [3, n0, _CSR, 0, [_SA], [0]];
+var CreateEndpointResponse = [3, n0, _CER, 0, [_EA], [0]];
+var CreatePlatformApplicationInput = [3, n0, _CPAI, 0, [_N, _P, _A], [0, 0, 128 | 0]];
+var CreatePlatformApplicationResponse = [3, n0, _CPAR, 0, [_PAA], [0]];
+var CreatePlatformEndpointInput = [
     3,
     n0,
-    _GQAR,
+    _CPEI,
     0,
-    [_QU, _ANt],
-    [
-        0,
-        [
-            64 | 0,
-            {
-                [_xN]: _ANtt,
-                [_xF]: 1,
-            },
-        ],
-    ],
+    [_PAA, _T, _CUD, _A],
+    [0, 0, 0, 128 | 0],
 ];
-var GetQueueAttributesResult = [
+var CreateSMSSandboxPhoneNumberInput = [
     3,
     n0,
-    _GQARe,
+    _CSMSSPNI,
     0,
-    [_At],
-    [
-        [
-            () => QueueAttributeMap,
-            {
-                [_xN]: _Att,
-                [_xF]: 1,
-            },
-        ],
-    ],
+    [_PN, _LC],
+    [[() => PhoneNumberString, 0], 0],
 ];
-var GetQueueUrlRequest = [3, n0, _GQUR, 0, [_QN, _QOAWSAI], [0, 0]];
-var GetQueueUrlResult = [3, n0, _GQURe, 0, [_QU], [0]];
-var InvalidAddress = [
+var CreateSMSSandboxPhoneNumberResult = [3, n0, _CSMSSPNR, 0, [], []];
+var CreateTopicInput = [
+    3,
+    n0,
+    _CTI,
+    0,
+    [_N, _A, _Ta, _DPP],
+    [0, 128 | 0, () => TagList, 0],
+];
+var CreateTopicResponse = [3, n0, _CTR, 0, [_TA], [0]];
+var DeleteEndpointInput = [3, n0, _DEI, 0, [_EA], [0]];
+var DeletePlatformApplicationInput = [3, n0, _DPAI, 0, [_PAA], [0]];
+var DeleteSMSSandboxPhoneNumberInput = [
+    3,
+    n0,
+    _DSMSSPNI,
+    0,
+    [_PN],
+    [[() => PhoneNumberString, 0]],
+];
+var DeleteSMSSandboxPhoneNumberResult = [3, n0, _DSMSSPNR, 0, [], []];
+var DeleteTopicInput = [3, n0, _DTI, 0, [_TA], [0]];
+var EmptyBatchRequestException = [
     -3,
     n0,
-    _IA,
-    {
-        [_e]: _c,
-        [_hE]: 404,
-        [_aQE]: [`InvalidAddress`, 404],
-    },
-    [_m],
-    [0],
-];
-schema.TypeRegistry.for(n0).registerError(InvalidAddress, InvalidAddress$1);
-var InvalidAttributeName = [
-    -3,
-    n0,
-    _IAN,
-    {
-        [_e]: _c,
-    },
-    [_m],
-    [0],
-];
-schema.TypeRegistry.for(n0).registerError(InvalidAttributeName, InvalidAttributeName$1);
-var InvalidAttributeValue = [
-    -3,
-    n0,
-    _IAV,
-    {
-        [_e]: _c,
-    },
-    [_m],
-    [0],
-];
-schema.TypeRegistry.for(n0).registerError(InvalidAttributeValue, InvalidAttributeValue$1);
-var InvalidBatchEntryId = [
-    -3,
-    n0,
-    _IBEI,
+    _EBRE,
     {
         [_e]: _c,
         [_hE]: 400,
-        [_aQE]: [`AWS.SimpleQueueService.InvalidBatchEntryId`, 400],
+        [_aQE]: [`EmptyBatchRequest`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(InvalidBatchEntryId, InvalidBatchEntryId$1);
-var InvalidIdFormat = [
+schema.TypeRegistry.for(n0).registerError(EmptyBatchRequestException, EmptyBatchRequestException$1);
+var Endpoint = [3, n0, _E, 0, [_EA, _A], [0, 128 | 0]];
+var EndpointDisabledException = [
     -3,
     n0,
-    _IIF,
+    _EDE,
     {
         [_e]: _c,
-    },
-    [],
-    [],
-];
-schema.TypeRegistry.for(n0).registerError(InvalidIdFormat, InvalidIdFormat$1);
-var InvalidMessageContents = [
-    -3,
-    n0,
-    _IMC,
-    {
-        [_e]: _c,
+        [_hE]: 400,
+        [_aQE]: [`EndpointDisabled`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(InvalidMessageContents, InvalidMessageContents$1);
-var InvalidSecurity = [
+schema.TypeRegistry.for(n0).registerError(EndpointDisabledException, EndpointDisabledException$1);
+var FilterPolicyLimitExceededException = [
     -3,
     n0,
-    _IS,
+    _FPLEE,
+    {
+        [_e]: _c,
+        [_hE]: 403,
+        [_aQE]: [`FilterPolicyLimitExceeded`, 403],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(FilterPolicyLimitExceededException, FilterPolicyLimitExceededException$1);
+var GetDataProtectionPolicyInput = [3, n0, _GDPPI, 0, [_RA], [0]];
+var GetDataProtectionPolicyResponse = [3, n0, _GDPPR, 0, [_DPP], [0]];
+var GetEndpointAttributesInput = [3, n0, _GEAI, 0, [_EA], [0]];
+var GetEndpointAttributesResponse = [3, n0, _GEAR, 0, [_A], [128 | 0]];
+var GetPlatformApplicationAttributesInput = [3, n0, _GPAAI, 0, [_PAA], [0]];
+var GetPlatformApplicationAttributesResponse = [3, n0, _GPAAR, 0, [_A], [128 | 0]];
+var GetSMSAttributesInput = [3, n0, _GSMSAI, 0, [_a], [64 | 0]];
+var GetSMSAttributesResponse = [3, n0, _GSMSAR, 0, [_a], [128 | 0]];
+var GetSMSSandboxAccountStatusInput = [3, n0, _GSMSSASI, 0, [], []];
+var GetSMSSandboxAccountStatusResult = [3, n0, _GSMSSASR, 0, [_IIS], [2]];
+var GetSubscriptionAttributesInput = [3, n0, _GSAI, 0, [_SA], [0]];
+var GetSubscriptionAttributesResponse = [3, n0, _GSAR, 0, [_A], [128 | 0]];
+var GetTopicAttributesInput = [3, n0, _GTAI, 0, [_TA], [0]];
+var GetTopicAttributesResponse = [3, n0, _GTAR, 0, [_A], [128 | 0]];
+var InternalErrorException = [
+    -3,
+    n0,
+    _IEE,
+    {
+        [_e]: _s,
+        [_hE]: 500,
+        [_aQE]: [`InternalError`, 500],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(InternalErrorException, InternalErrorException$1);
+var InvalidBatchEntryIdException = [
+    -3,
+    n0,
+    _IBEIE,
+    {
+        [_e]: _c,
+        [_hE]: 400,
+        [_aQE]: [`InvalidBatchEntryId`, 400],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(InvalidBatchEntryIdException, InvalidBatchEntryIdException$1);
+var InvalidParameterException = [
+    -3,
+    n0,
+    _IPE,
+    {
+        [_e]: _c,
+        [_hE]: 400,
+        [_aQE]: [`InvalidParameter`, 400],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(InvalidParameterException, InvalidParameterException$1);
+var InvalidParameterValueException = [
+    -3,
+    n0,
+    _IPVE,
+    {
+        [_e]: _c,
+        [_hE]: 400,
+        [_aQE]: [`ParameterValueInvalid`, 400],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(InvalidParameterValueException, InvalidParameterValueException$1);
+var InvalidSecurityException = [
+    -3,
+    n0,
+    _ISE,
     {
         [_e]: _c,
         [_hE]: 403,
@@ -4253,415 +4300,258 @@ var InvalidSecurity = [
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(InvalidSecurity, InvalidSecurity$1);
-var KmsAccessDenied = [
+schema.TypeRegistry.for(n0).registerError(InvalidSecurityException, InvalidSecurityException$1);
+var InvalidStateException = [
     -3,
     n0,
-    _KAD,
+    _ISEn,
     {
         [_e]: _c,
         [_hE]: 400,
-        [_aQE]: [`KMS.AccessDeniedException`, 400],
+        [_aQE]: [`InvalidState`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(KmsAccessDenied, KmsAccessDenied$1);
-var KmsDisabled = [
+schema.TypeRegistry.for(n0).registerError(InvalidStateException, InvalidStateException$1);
+var KMSAccessDeniedException = [
     -3,
     n0,
-    _KD,
+    _KMSADE,
     {
         [_e]: _c,
         [_hE]: 400,
-        [_aQE]: [`KMS.DisabledException`, 400],
+        [_aQE]: [`KMSAccessDenied`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(KmsDisabled, KmsDisabled$1);
-var KmsInvalidKeyUsage = [
+schema.TypeRegistry.for(n0).registerError(KMSAccessDeniedException, KMSAccessDeniedException$1);
+var KMSDisabledException = [
     -3,
     n0,
-    _KIKU,
+    _KMSDE,
     {
         [_e]: _c,
         [_hE]: 400,
-        [_aQE]: [`KMS.InvalidKeyUsageException`, 400],
+        [_aQE]: [`KMSDisabled`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(KmsInvalidKeyUsage, KmsInvalidKeyUsage$1);
-var KmsInvalidState = [
+schema.TypeRegistry.for(n0).registerError(KMSDisabledException, KMSDisabledException$1);
+var KMSInvalidStateException = [
     -3,
     n0,
-    _KIS,
+    _KMSISE,
     {
         [_e]: _c,
         [_hE]: 400,
-        [_aQE]: [`KMS.InvalidStateException`, 400],
+        [_aQE]: [`KMSInvalidState`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(KmsInvalidState, KmsInvalidState$1);
-var KmsNotFound = [
+schema.TypeRegistry.for(n0).registerError(KMSInvalidStateException, KMSInvalidStateException$1);
+var KMSNotFoundException = [
     -3,
     n0,
-    _KNF,
+    _KMSNFE,
     {
         [_e]: _c,
         [_hE]: 400,
-        [_aQE]: [`KMS.NotFoundException`, 400],
+        [_aQE]: [`KMSNotFound`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(KmsNotFound, KmsNotFound$1);
-var KmsOptInRequired = [
+schema.TypeRegistry.for(n0).registerError(KMSNotFoundException, KMSNotFoundException$1);
+var KMSOptInRequired = [
     -3,
     n0,
-    _KOIR,
+    _KMSOIR,
     {
         [_e]: _c,
         [_hE]: 403,
-        [_aQE]: [`KMS.OptInRequired`, 403],
+        [_aQE]: [`KMSOptInRequired`, 403],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(KmsOptInRequired, KmsOptInRequired$1);
-var KmsThrottled = [
+schema.TypeRegistry.for(n0).registerError(KMSOptInRequired, KMSOptInRequired$1);
+var KMSThrottlingException = [
     -3,
     n0,
-    _KT,
+    _KMSTE,
     {
         [_e]: _c,
         [_hE]: 400,
-        [_aQE]: [`KMS.ThrottlingException`, 400],
+        [_aQE]: [`KMSThrottling`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(KmsThrottled, KmsThrottled$1);
-var ListDeadLetterSourceQueuesRequest = [3, n0, _LDLSQR, 0, [_QU, _NT, _MR], [0, 0, 1]];
-var ListDeadLetterSourceQueuesResult = [
+schema.TypeRegistry.for(n0).registerError(KMSThrottlingException, KMSThrottlingException$1);
+var ListEndpointsByPlatformApplicationInput = [3, n0, _LEBPAI, 0, [_PAA, _NT], [0, 0]];
+var ListEndpointsByPlatformApplicationResponse = [
     3,
     n0,
-    _LDLSQRi,
+    _LEBPAR,
     0,
-    [_qU, _NT],
-    [
-        [
-            64 | 0,
-            {
-                [_xN]: _QU,
-                [_xF]: 1,
-            },
-        ],
-        0,
-    ],
+    [_En, _NT],
+    [() => ListOfEndpoints, 0],
 ];
-var ListMessageMoveTasksRequest = [3, n0, _LMMTR, 0, [_SA, _MR], [0, 1]];
-var ListMessageMoveTasksResult = [
+var ListOriginationNumbersRequest = [3, n0, _LONR, 0, [_NT, _MR], [0, 1]];
+var ListOriginationNumbersResult = [
     3,
     n0,
-    _LMMTRi,
-    {
-        [_xN]: _LMMTRi,
-    },
-    [_R],
-    [
-        [
-            () => ListMessageMoveTasksResultEntryList,
-            {
-                [_xN]: _LMMTRE,
-                [_xF]: 1,
-            },
-        ],
-    ],
-];
-var ListMessageMoveTasksResultEntry = [
-    3,
-    n0,
-    _LMMTRE,
+    _LONRi,
     0,
-    [_TH, _St, _SA, _DA, _MNOMPS, _ANOMM, _ANOMTM, _FR, _ST],
-    [0, 0, 0, 0, 1, 1, 1, 0, 1],
+    [_NT, _PNh],
+    [0, [() => PhoneNumberInformationList, 0]],
 ];
-var ListQueuesRequest = [3, n0, _LQR, 0, [_QNP, _NT, _MR], [0, 0, 1]];
-var ListQueuesResult = [
+var ListPhoneNumbersOptedOutInput = [3, n0, _LPNOOI, 0, [_nT], [0]];
+var ListPhoneNumbersOptedOutResponse = [
     3,
     n0,
-    _LQRi,
+    _LPNOOR,
     0,
-    [_QUu, _NT],
-    [
-        [
-            64 | 0,
-            {
-                [_xN]: _QU,
-                [_xF]: 1,
-            },
-        ],
-        0,
-    ],
+    [_pNh, _nT],
+    [[() => PhoneNumberList, 0], 0],
 ];
-var ListQueueTagsRequest = [3, n0, _LQTR, 0, [_QU], [0]];
-var ListQueueTagsResult = [
+var ListPlatformApplicationsInput = [3, n0, _LPAI, 0, [_NT], [0]];
+var ListPlatformApplicationsResponse = [
     3,
     n0,
-    _LQTRi,
+    _LPAR,
     0,
-    [_Ta],
-    [
-        [
-            () => TagMap,
-            {
-                [_xN]: _T,
-                [_xF]: 1,
-            },
-        ],
-    ],
+    [_PA, _NT],
+    [() => ListOfPlatformApplications, 0],
 ];
-var Message = [
+var ListSMSSandboxPhoneNumbersInput = [3, n0, _LSMSSPNI, 0, [_NT, _MR], [0, 1]];
+var ListSMSSandboxPhoneNumbersResult = [
     3,
     n0,
-    _M,
+    _LSMSSPNR,
     0,
-    [_MI, _RH, _MDOB, _B, _At, _MDOMA, _MA],
-    [
-        0,
-        0,
-        0,
-        0,
-        [
-            () => MessageSystemAttributeMap,
-            {
-                [_xN]: _Att,
-                [_xF]: 1,
-            },
-        ],
-        0,
-        [
-            () => MessageBodyAttributeMap,
-            {
-                [_xN]: _MAe,
-                [_xF]: 1,
-            },
-        ],
-    ],
+    [_PNh, _NT],
+    [[() => SMSSandboxPhoneNumberList, 0], 0],
 ];
-var MessageAttributeValue = [
+var ListSubscriptionsByTopicInput = [3, n0, _LSBTI, 0, [_TA, _NT], [0, 0]];
+var ListSubscriptionsByTopicResponse = [
     3,
     n0,
-    _MAV,
+    _LSBTR,
     0,
-    [_SV, _BV, _SLV, _BLV, _DT],
-    [
-        0,
-        21,
-        [
-            () => StringList,
-            {
-                [_xN]: _SLVt,
-                [_xF]: 1,
-            },
-        ],
-        [
-            () => BinaryList,
-            {
-                [_xN]: _BLVi,
-                [_xF]: 1,
-            },
-        ],
-        0,
-    ],
+    [_S, _NT],
+    [() => SubscriptionsList, 0],
 ];
-var MessageNotInflight = [
+var ListSubscriptionsInput = [3, n0, _LSI, 0, [_NT], [0]];
+var ListSubscriptionsResponse = [3, n0, _LSR, 0, [_S, _NT], [() => SubscriptionsList, 0]];
+var ListTagsForResourceRequest = [3, n0, _LTFRR, 0, [_RA], [0]];
+var ListTagsForResourceResponse = [3, n0, _LTFRRi, 0, [_Ta], [() => TagList]];
+var ListTopicsInput = [3, n0, _LTI, 0, [_NT], [0]];
+var ListTopicsResponse = [3, n0, _LTR, 0, [_To, _NT], [() => TopicsList, 0]];
+var MessageAttributeValue = [3, n0, _MAV, 0, [_DT, _SV, _BV], [0, 0, 21]];
+var NotFoundException = [
     -3,
     n0,
-    _MNI,
-    {
-        [_e]: _c,
-        [_hE]: 400,
-        [_aQE]: [`AWS.SimpleQueueService.MessageNotInflight`, 400],
-    },
-    [],
-    [],
-];
-schema.TypeRegistry.for(n0).registerError(MessageNotInflight, MessageNotInflight$1);
-var MessageSystemAttributeValue = [
-    3,
-    n0,
-    _MSAV,
-    0,
-    [_SV, _BV, _SLV, _BLV, _DT],
-    [
-        0,
-        21,
-        [
-            () => StringList,
-            {
-                [_xN]: _SLVt,
-                [_xF]: 1,
-            },
-        ],
-        [
-            () => BinaryList,
-            {
-                [_xN]: _BLVi,
-                [_xF]: 1,
-            },
-        ],
-        0,
-    ],
-];
-var OverLimit = [
-    -3,
-    n0,
-    _OL,
-    {
-        [_e]: _c,
-        [_hE]: 403,
-        [_aQE]: [`OverLimit`, 403],
-    },
-    [_m],
-    [0],
-];
-schema.TypeRegistry.for(n0).registerError(OverLimit, OverLimit$1);
-var PurgeQueueInProgress = [
-    -3,
-    n0,
-    _PQIP,
-    {
-        [_e]: _c,
-        [_hE]: 403,
-        [_aQE]: [`AWS.SimpleQueueService.PurgeQueueInProgress`, 403],
-    },
-    [_m],
-    [0],
-];
-schema.TypeRegistry.for(n0).registerError(PurgeQueueInProgress, PurgeQueueInProgress$1);
-var PurgeQueueRequest = [3, n0, _PQR, 0, [_QU], [0]];
-var QueueDeletedRecently = [
-    -3,
-    n0,
-    _QDR,
-    {
-        [_e]: _c,
-        [_hE]: 400,
-        [_aQE]: [`AWS.SimpleQueueService.QueueDeletedRecently`, 400],
-    },
-    [_m],
-    [0],
-];
-schema.TypeRegistry.for(n0).registerError(QueueDeletedRecently, QueueDeletedRecently$1);
-var QueueDoesNotExist = [
-    -3,
-    n0,
-    _QDNE,
-    {
-        [_e]: _c,
-        [_hE]: 400,
-        [_aQE]: [`AWS.SimpleQueueService.NonExistentQueue`, 400],
-    },
-    [_m],
-    [0],
-];
-schema.TypeRegistry.for(n0).registerError(QueueDoesNotExist, QueueDoesNotExist$1);
-var QueueNameExists = [
-    -3,
-    n0,
-    _QNE,
-    {
-        [_e]: _c,
-        [_hE]: 400,
-        [_aQE]: [`QueueAlreadyExists`, 400],
-    },
-    [_m],
-    [0],
-];
-schema.TypeRegistry.for(n0).registerError(QueueNameExists, QueueNameExists$1);
-var ReceiptHandleIsInvalid = [
-    -3,
-    n0,
-    _RHII,
+    _NFE,
     {
         [_e]: _c,
         [_hE]: 404,
-        [_aQE]: [`ReceiptHandleIsInvalid`, 404],
+        [_aQE]: [`NotFound`, 404],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(ReceiptHandleIsInvalid, ReceiptHandleIsInvalid$1);
-var ReceiveMessageRequest = [
-    3,
-    n0,
-    _RMR,
-    0,
-    [_QU, _ANt, _MSAN, _MAN, _MNOM, _VT, _WTS, _RRAI],
-    [
-        0,
-        [
-            64 | 0,
-            {
-                [_xN]: _ANtt,
-                [_xF]: 1,
-            },
-        ],
-        [
-            64 | 0,
-            {
-                [_xN]: _ANtt,
-                [_xF]: 1,
-            },
-        ],
-        [
-            64 | 0,
-            {
-                [_xN]: _MANe,
-                [_xF]: 1,
-            },
-        ],
-        1,
-        1,
-        1,
-        0,
-    ],
-];
-var ReceiveMessageResult = [
-    3,
-    n0,
-    _RMRe,
-    0,
-    [_Me],
-    [
-        [
-            () => MessageList,
-            {
-                [_xN]: _M,
-                [_xF]: 1,
-            },
-        ],
-    ],
-];
-var RemovePermissionRequest = [3, n0, _RPR, 0, [_QU, _L], [0, 0]];
-var RequestThrottled = [
+schema.TypeRegistry.for(n0).registerError(NotFoundException, NotFoundException$1);
+var OptedOutException = [
     -3,
     n0,
-    _RT,
+    _OOE,
+    {
+        [_e]: _c,
+        [_hE]: 400,
+        [_aQE]: [`OptedOut`, 400],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(OptedOutException, OptedOutException$1);
+var OptInPhoneNumberInput = [3, n0, _OIPNI, 0, [_pN], [[() => PhoneNumber, 0]]];
+var OptInPhoneNumberResponse = [3, n0, _OIPNR, 0, [], []];
+var PhoneNumberInformation = [
+    3,
+    n0,
+    _PNI,
+    0,
+    [_CA, _PN, _St, _ICC, _RT, _NC],
+    [4, [() => PhoneNumber, 0], 0, 0, 0, 64 | 0],
+];
+var PlatformApplication = [3, n0, _PAl, 0, [_PAA, _A], [0, 128 | 0]];
+var PlatformApplicationDisabledException = [
+    -3,
+    n0,
+    _PADE,
+    {
+        [_e]: _c,
+        [_hE]: 400,
+        [_aQE]: [`PlatformApplicationDisabled`, 400],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(PlatformApplicationDisabledException, PlatformApplicationDisabledException$1);
+var PublishBatchInput = [
+    3,
+    n0,
+    _PBI,
+    0,
+    [_TA, _PBRE],
+    [0, [() => PublishBatchRequestEntryList, 0]],
+];
+var PublishBatchRequestEntry = [
+    3,
+    n0,
+    _PBREu,
+    0,
+    [_I, _M, _Su, _MS, _MA, _MDI, _MGI],
+    [0, 0, 0, 0, [() => MessageAttributeMap, 0], 0, 0],
+];
+var PublishBatchResponse = [
+    3,
+    n0,
+    _PBR,
+    0,
+    [_Suc, _F],
+    [() => PublishBatchResultEntryList, () => BatchResultErrorEntryList],
+];
+var PublishBatchResultEntry = [3, n0, _PBREub, 0, [_I, _MI, _SN], [0, 0, 0]];
+var PublishInput = [
+    3,
+    n0,
+    _PI,
+    0,
+    [_TA, _TAa, _PN, _M, _Su, _MS, _MA, _MDI, _MGI],
+    [0, 0, [() => PhoneNumber, 0], 0, 0, 0, [() => MessageAttributeMap, 0], 0, 0],
+];
+var PublishResponse = [3, n0, _PR, 0, [_MI, _SN], [0, 0]];
+var PutDataProtectionPolicyInput = [3, n0, _PDPPI, 0, [_RA, _DPP], [0, 0]];
+var RemovePermissionInput = [3, n0, _RPI, 0, [_TA, _L], [0, 0]];
+var ReplayLimitExceededException = [
+    -3,
+    n0,
+    _RLEE,
     {
         [_e]: _c,
         [_hE]: 403,
-        [_aQE]: [`RequestThrottled`, 403],
+        [_aQE]: [`ReplayLimitExceeded`, 403],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(RequestThrottled, RequestThrottled$1);
+schema.TypeRegistry.for(n0).registerError(ReplayLimitExceededException, ReplayLimitExceededException$1);
 var ResourceNotFoundException = [
     -3,
     n0,
@@ -4669,279 +4559,191 @@ var ResourceNotFoundException = [
     {
         [_e]: _c,
         [_hE]: 404,
-        [_aQE]: [`ResourceNotFoundException`, 404],
+        [_aQE]: [`ResourceNotFound`, 404],
     },
     [_m],
     [0],
 ];
 schema.TypeRegistry.for(n0).registerError(ResourceNotFoundException, ResourceNotFoundException$1);
-var SendMessageBatchRequest = [
+var SetEndpointAttributesInput = [3, n0, _SEAI, 0, [_EA, _A], [0, 128 | 0]];
+var SetPlatformApplicationAttributesInput = [3, n0, _SPAAI, 0, [_PAA, _A], [0, 128 | 0]];
+var SetSMSAttributesInput = [3, n0, _SSMSAI, 0, [_a], [128 | 0]];
+var SetSMSAttributesResponse = [3, n0, _SSMSAR, 0, [], []];
+var SetSubscriptionAttributesInput = [3, n0, _SSAI, 0, [_SA, _ANt, _AV], [0, 0, 0]];
+var SetTopicAttributesInput = [3, n0, _STAI, 0, [_TA, _ANt, _AV], [0, 0, 0]];
+var SMSSandboxPhoneNumber = [
     3,
     n0,
-    _SMBR,
+    _SMSSPN,
     0,
-    [_QU, _E],
-    [
-        0,
-        [
-            () => SendMessageBatchRequestEntryList,
-            {
-                [_xN]: _SMBRE,
-                [_xF]: 1,
-            },
-        ],
-    ],
+    [_PN, _St],
+    [[() => PhoneNumberString, 0], 0],
 ];
-var SendMessageBatchRequestEntry = [
-    3,
-    n0,
-    _SMBRE,
-    0,
-    [_I, _MB, _DS, _MA, _MSA, _MDI, _MGI],
-    [
-        0,
-        0,
-        1,
-        [
-            () => MessageBodyAttributeMap,
-            {
-                [_xN]: _MAe,
-                [_xF]: 1,
-            },
-        ],
-        [
-            () => MessageBodySystemAttributeMap,
-            {
-                [_xN]: _MSAe,
-                [_xF]: 1,
-            },
-        ],
-        0,
-        0,
-    ],
-];
-var SendMessageBatchResult = [
-    3,
-    n0,
-    _SMBRe,
-    0,
-    [_S, _F],
-    [
-        [
-            () => SendMessageBatchResultEntryList,
-            {
-                [_xN]: _SMBREe,
-                [_xF]: 1,
-            },
-        ],
-        [
-            () => BatchResultErrorEntryList,
-            {
-                [_xN]: _BREE,
-                [_xF]: 1,
-            },
-        ],
-    ],
-];
-var SendMessageBatchResultEntry = [
-    3,
-    n0,
-    _SMBREe,
-    0,
-    [_I, _MI, _MDOMB, _MDOMA, _MDOMSA, _SN],
-    [0, 0, 0, 0, 0, 0],
-];
-var SendMessageRequest = [
-    3,
-    n0,
-    _SMR,
-    0,
-    [_QU, _MB, _DS, _MA, _MSA, _MDI, _MGI],
-    [
-        0,
-        0,
-        1,
-        [
-            () => MessageBodyAttributeMap,
-            {
-                [_xN]: _MAe,
-                [_xF]: 1,
-            },
-        ],
-        [
-            () => MessageBodySystemAttributeMap,
-            {
-                [_xN]: _MSAe,
-                [_xF]: 1,
-            },
-        ],
-        0,
-        0,
-    ],
-];
-var SendMessageResult = [
-    3,
-    n0,
-    _SMRe,
-    0,
-    [_MDOMB, _MDOMA, _MDOMSA, _MI, _SN],
-    [0, 0, 0, 0, 0],
-];
-var SetQueueAttributesRequest = [
-    3,
-    n0,
-    _SQAR,
-    0,
-    [_QU, _At],
-    [
-        0,
-        [
-            () => QueueAttributeMap,
-            {
-                [_xN]: _Att,
-                [_xF]: 1,
-            },
-        ],
-    ],
-];
-var StartMessageMoveTaskRequest = [3, n0, _SMMTR, 0, [_SA, _DA, _MNOMPS], [0, 0, 1]];
-var StartMessageMoveTaskResult = [3, n0, _SMMTRt, 0, [_TH], [0]];
-var TagQueueRequest = [
-    3,
-    n0,
-    _TQR,
-    0,
-    [_QU, _Ta],
-    [
-        0,
-        [
-            () => TagMap,
-            {
-                [_xN]: _T,
-                [_xF]: 1,
-            },
-        ],
-    ],
-];
-var TooManyEntriesInBatchRequest = [
+var StaleTagException = [
     -3,
     n0,
-    _TMEIBR,
+    _STE,
     {
         [_e]: _c,
         [_hE]: 400,
-        [_aQE]: [`AWS.SimpleQueueService.TooManyEntriesInBatchRequest`, 400],
+        [_aQE]: [`StaleTag`, 400],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(TooManyEntriesInBatchRequest, TooManyEntriesInBatchRequest$1);
-var UnsupportedOperation = [
+schema.TypeRegistry.for(n0).registerError(StaleTagException, StaleTagException$1);
+var SubscribeInput = [3, n0, _SI, 0, [_TA, _Pr, _E, _A, _RSA], [0, 0, 0, 128 | 0, 2]];
+var SubscribeResponse = [3, n0, _SR, 0, [_SA], [0]];
+var Subscription = [3, n0, _Sub, 0, [_SA, _O, _Pr, _E, _TA], [0, 0, 0, 0, 0]];
+var SubscriptionLimitExceededException = [
     -3,
     n0,
-    _UO,
+    _SLEE,
     {
         [_e]: _c,
-        [_hE]: 400,
-        [_aQE]: [`AWS.SimpleQueueService.UnsupportedOperation`, 400],
+        [_hE]: 403,
+        [_aQE]: [`SubscriptionLimitExceeded`, 403],
     },
     [_m],
     [0],
 ];
-schema.TypeRegistry.for(n0).registerError(UnsupportedOperation, UnsupportedOperation$1);
-var UntagQueueRequest = [
+schema.TypeRegistry.for(n0).registerError(SubscriptionLimitExceededException, SubscriptionLimitExceededException$1);
+var Tag = [3, n0, _Tag, 0, [_K, _V], [0, 0]];
+var TagLimitExceededException = [
+    -3,
+    n0,
+    _TLEE,
+    {
+        [_e]: _c,
+        [_hE]: 400,
+        [_aQE]: [`TagLimitExceeded`, 400],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(TagLimitExceededException, TagLimitExceededException$1);
+var TagPolicyException = [
+    -3,
+    n0,
+    _TPE,
+    {
+        [_e]: _c,
+        [_hE]: 400,
+        [_aQE]: [`TagPolicy`, 400],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(TagPolicyException, TagPolicyException$1);
+var TagResourceRequest = [3, n0, _TRR, 0, [_RA, _Ta], [0, () => TagList]];
+var TagResourceResponse = [3, n0, _TRRa, 0, [], []];
+var ThrottledException = [
+    -3,
+    n0,
+    _TE,
+    {
+        [_e]: _c,
+        [_hE]: 429,
+        [_aQE]: [`Throttled`, 429],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(ThrottledException, ThrottledException$1);
+var TooManyEntriesInBatchRequestException = [
+    -3,
+    n0,
+    _TMEIBRE,
+    {
+        [_e]: _c,
+        [_hE]: 400,
+        [_aQE]: [`TooManyEntriesInBatchRequest`, 400],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(TooManyEntriesInBatchRequestException, TooManyEntriesInBatchRequestException$1);
+var Topic = [3, n0, _Top, 0, [_TA], [0]];
+var TopicLimitExceededException = [
+    -3,
+    n0,
+    _TLEEo,
+    {
+        [_e]: _c,
+        [_hE]: 403,
+        [_aQE]: [`TopicLimitExceeded`, 403],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(TopicLimitExceededException, TopicLimitExceededException$1);
+var UnsubscribeInput = [3, n0, _UI, 0, [_SA], [0]];
+var UntagResourceRequest = [3, n0, _URR, 0, [_RA, _TK], [0, 64 | 0]];
+var UntagResourceResponse = [3, n0, _URRn, 0, [], []];
+var UserErrorException = [
+    -3,
+    n0,
+    _UEE,
+    {
+        [_e]: _c,
+        [_hE]: 400,
+        [_aQE]: [`UserError`, 400],
+    },
+    [_m],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(UserErrorException, UserErrorException$1);
+var ValidationException = [
+    -3,
+    n0,
+    _VE,
+    {
+        [_e]: _c,
+        [_hE]: 400,
+        [_aQE]: [`ValidationException`, 400],
+    },
+    [_M],
+    [0],
+];
+schema.TypeRegistry.for(n0).registerError(ValidationException, ValidationException$1);
+var VerificationException = [
+    -3,
+    n0,
+    _VEe,
+    {
+        [_e]: _c,
+    },
+    [_M, _St],
+    [0, 0],
+];
+schema.TypeRegistry.for(n0).registerError(VerificationException, VerificationException$1);
+var VerifySMSSandboxPhoneNumberInput = [
     3,
     n0,
-    _UQR,
+    _VSMSSPNI,
     0,
-    [_QU, _TK],
-    [
-        0,
-        [
-            64 | 0,
-            {
-                [_xN]: _TKa,
-                [_xF]: 1,
-            },
-        ],
-    ],
+    [_PN, _OTP],
+    [[() => PhoneNumberString, 0], 0],
 ];
+var VerifySMSSandboxPhoneNumberResult = [3, n0, _VSMSSPNR, 0, [], []];
 var __Unit = "unit";
-var SQSServiceException = [-3, _s, "SQSServiceException", 0, [], []];
-schema.TypeRegistry.for(_s).registerError(SQSServiceException, SQSServiceException$1);
+var SNSServiceException = [-3, _sm, "SNSServiceException", 0, [], []];
+schema.TypeRegistry.for(_sm).registerError(SNSServiceException, SNSServiceException$1);
 var BatchResultErrorEntryList = [1, n0, _BREEL, 0, () => BatchResultErrorEntry];
-var BinaryList = [
-    1,
-    n0,
-    _BL,
-    0,
-    [
-        21,
-        {
-            [_xN]: _BLVi,
-        },
-    ],
-];
-var ChangeMessageVisibilityBatchRequestEntryList = [
-    1,
-    n0,
-    _CMVBREL,
-    0,
-    () => ChangeMessageVisibilityBatchRequestEntry,
-];
-var ChangeMessageVisibilityBatchResultEntryList = [
-    1,
-    n0,
-    _CMVBRELh,
-    0,
-    () => ChangeMessageVisibilityBatchResultEntry,
-];
-var DeleteMessageBatchRequestEntryList = [
-    1,
-    n0,
-    _DMBREL,
-    0,
-    () => DeleteMessageBatchRequestEntry,
-];
-var DeleteMessageBatchResultEntryList = [
-    1,
-    n0,
-    _DMBRELe,
-    0,
-    () => DeleteMessageBatchResultEntry,
-];
-var ListMessageMoveTasksResultEntryList = [
-    1,
-    n0,
-    _LMMTREL,
-    0,
-    () => ListMessageMoveTasksResultEntry,
-];
-var MessageList = [1, n0, _ML, 0, [() => Message, 0]];
-var SendMessageBatchRequestEntryList = [
-    1,
-    n0,
-    _SMBREL,
-    0,
-    [() => SendMessageBatchRequestEntry, 0],
-];
-var SendMessageBatchResultEntryList = [1, n0, _SMBRELe, 0, () => SendMessageBatchResultEntry];
-var StringList = [
-    1,
-    n0,
-    _SL,
-    0,
-    [
-        0,
-        {
-            [_xN]: _SLVt,
-        },
-    ],
-];
-var MessageBodyAttributeMap = [
+var ListOfEndpoints = [1, n0, _LOE, 0, () => Endpoint];
+var ListOfPlatformApplications = [1, n0, _LOPA, 0, () => PlatformApplication];
+var PhoneNumberInformationList = [1, n0, _PNIL, 0, [() => PhoneNumberInformation, 0]];
+var PhoneNumberList = [1, n0, _PNL, 0, [() => PhoneNumber, 0]];
+var PublishBatchRequestEntryList = [1, n0, _PBREL, 0, [() => PublishBatchRequestEntry, 0]];
+var PublishBatchResultEntryList = [1, n0, _PBRELu, 0, () => PublishBatchResultEntry];
+var SMSSandboxPhoneNumberList = [1, n0, _SMSSPNL, 0, [() => SMSSandboxPhoneNumber, 0]];
+var SubscriptionsList = [1, n0, _SL, 0, () => Subscription];
+var TagList = [1, n0, _TL, 0, () => Tag];
+var TopicsList = [1, n0, _TLo, 0, () => Topic];
+var MessageAttributeMap = [
     2,
     n0,
-    _MBAM,
+    _MAM,
     0,
     [
         0,
@@ -4956,178 +4758,258 @@ var MessageBodyAttributeMap = [
         },
     ],
 ];
-var MessageBodySystemAttributeMap = [
-    2,
-    n0,
-    _MBSAM,
-    0,
-    [
-        0,
-        {
-            [_xN]: _N,
-        },
-    ],
-    [
-        () => MessageSystemAttributeValue,
-        {
-            [_xN]: _V,
-        },
-    ],
-];
-var MessageSystemAttributeMap = [
-    2,
-    n0,
-    _MSAM,
-    0,
-    [
-        0,
-        {
-            [_xN]: _N,
-        },
-    ],
-    [
-        0,
-        {
-            [_xN]: _V,
-        },
-    ],
-];
-var QueueAttributeMap = [
-    2,
-    n0,
-    _QAM,
-    0,
-    [
-        0,
-        {
-            [_xN]: _N,
-        },
-    ],
-    [
-        0,
-        {
-            [_xN]: _V,
-        },
-    ],
-];
-var TagMap = [
-    2,
-    n0,
-    _TM,
-    0,
-    [
-        0,
-        {
-            [_xN]: _K,
-        },
-    ],
-    [
-        0,
-        {
-            [_xN]: _V,
-        },
-    ],
-];
-var AddPermission = [9, n0, _AP, 0, () => AddPermissionRequest, () => __Unit];
-var CancelMessageMoveTask = [
+var AddPermission = [9, n0, _AP, 0, () => AddPermissionInput, () => __Unit];
+var CheckIfPhoneNumberIsOptedOut = [
     9,
     n0,
-    _CMMT,
+    _CIPNIOO,
     0,
-    () => CancelMessageMoveTaskRequest,
-    () => CancelMessageMoveTaskResult,
+    () => CheckIfPhoneNumberIsOptedOutInput,
+    () => CheckIfPhoneNumberIsOptedOutResponse,
 ];
-var ChangeMessageVisibility = [
+var ConfirmSubscription = [
     9,
     n0,
-    _CMV,
+    _CS,
     0,
-    () => ChangeMessageVisibilityRequest,
+    () => ConfirmSubscriptionInput,
+    () => ConfirmSubscriptionResponse,
+];
+var CreatePlatformApplication = [
+    9,
+    n0,
+    _CPA,
+    0,
+    () => CreatePlatformApplicationInput,
+    () => CreatePlatformApplicationResponse,
+];
+var CreatePlatformEndpoint = [
+    9,
+    n0,
+    _CPE,
+    0,
+    () => CreatePlatformEndpointInput,
+    () => CreateEndpointResponse,
+];
+var CreateSMSSandboxPhoneNumber = [
+    9,
+    n0,
+    _CSMSSPN,
+    0,
+    () => CreateSMSSandboxPhoneNumberInput,
+    () => CreateSMSSandboxPhoneNumberResult,
+];
+var CreateTopic = [9, n0, _CT, 0, () => CreateTopicInput, () => CreateTopicResponse];
+var DeleteEndpoint = [9, n0, _DE, 0, () => DeleteEndpointInput, () => __Unit];
+var DeletePlatformApplication = [
+    9,
+    n0,
+    _DPA,
+    0,
+    () => DeletePlatformApplicationInput,
     () => __Unit,
 ];
-var ChangeMessageVisibilityBatch = [
+var DeleteSMSSandboxPhoneNumber = [
     9,
     n0,
-    _CMVB,
+    _DSMSSPN,
     0,
-    () => ChangeMessageVisibilityBatchRequest,
-    () => ChangeMessageVisibilityBatchResult,
+    () => DeleteSMSSandboxPhoneNumberInput,
+    () => DeleteSMSSandboxPhoneNumberResult,
 ];
-var CreateQueue = [9, n0, _CQ, 0, () => CreateQueueRequest, () => CreateQueueResult];
-var DeleteMessage = [9, n0, _DM, 0, () => DeleteMessageRequest, () => __Unit];
-var DeleteMessageBatch = [
+var DeleteTopic = [9, n0, _DTe, 0, () => DeleteTopicInput, () => __Unit];
+var GetDataProtectionPolicy = [
     9,
     n0,
-    _DMB,
+    _GDPP,
     0,
-    () => DeleteMessageBatchRequest,
-    () => DeleteMessageBatchResult,
+    () => GetDataProtectionPolicyInput,
+    () => GetDataProtectionPolicyResponse,
 ];
-var DeleteQueue = [9, n0, _DQ, 0, () => DeleteQueueRequest, () => __Unit];
-var GetQueueAttributes = [
+var GetEndpointAttributes = [
     9,
     n0,
-    _GQA,
+    _GEA,
     0,
-    () => GetQueueAttributesRequest,
-    () => GetQueueAttributesResult,
+    () => GetEndpointAttributesInput,
+    () => GetEndpointAttributesResponse,
 ];
-var GetQueueUrl = [9, n0, _GQU, 0, () => GetQueueUrlRequest, () => GetQueueUrlResult];
-var ListDeadLetterSourceQueues = [
+var GetPlatformApplicationAttributes = [
     9,
     n0,
-    _LDLSQ,
+    _GPAA,
     0,
-    () => ListDeadLetterSourceQueuesRequest,
-    () => ListDeadLetterSourceQueuesResult,
+    () => GetPlatformApplicationAttributesInput,
+    () => GetPlatformApplicationAttributesResponse,
 ];
-var ListMessageMoveTasks = [
+var GetSMSAttributes = [
     9,
     n0,
-    _LMMT,
+    _GSMSA,
     0,
-    () => ListMessageMoveTasksRequest,
-    () => ListMessageMoveTasksResult,
+    () => GetSMSAttributesInput,
+    () => GetSMSAttributesResponse,
 ];
-var ListQueues = [9, n0, _LQ, 0, () => ListQueuesRequest, () => ListQueuesResult];
-var ListQueueTags = [
+var GetSMSSandboxAccountStatus = [
     9,
     n0,
-    _LQT,
+    _GSMSSAS,
     0,
-    () => ListQueueTagsRequest,
-    () => ListQueueTagsResult,
+    () => GetSMSSandboxAccountStatusInput,
+    () => GetSMSSandboxAccountStatusResult,
 ];
-var PurgeQueue = [9, n0, _PQ, 0, () => PurgeQueueRequest, () => __Unit];
-var ReceiveMessage = [
+var GetSubscriptionAttributes = [
     9,
     n0,
-    _RM,
+    _GSA,
     0,
-    () => ReceiveMessageRequest,
-    () => ReceiveMessageResult,
+    () => GetSubscriptionAttributesInput,
+    () => GetSubscriptionAttributesResponse,
 ];
-var RemovePermission = [9, n0, _RP, 0, () => RemovePermissionRequest, () => __Unit];
-var SendMessage = [9, n0, _SM, 0, () => SendMessageRequest, () => SendMessageResult];
-var SendMessageBatch = [
+var GetTopicAttributes = [
     9,
     n0,
-    _SMB,
+    _GTA,
     0,
-    () => SendMessageBatchRequest,
-    () => SendMessageBatchResult,
+    () => GetTopicAttributesInput,
+    () => GetTopicAttributesResponse,
 ];
-var SetQueueAttributes = [9, n0, _SQA, 0, () => SetQueueAttributesRequest, () => __Unit];
-var StartMessageMoveTask = [
+var ListEndpointsByPlatformApplication = [
     9,
     n0,
-    _SMMT,
+    _LEBPA,
     0,
-    () => StartMessageMoveTaskRequest,
-    () => StartMessageMoveTaskResult,
+    () => ListEndpointsByPlatformApplicationInput,
+    () => ListEndpointsByPlatformApplicationResponse,
 ];
-var TagQueue = [9, n0, _TQ, 0, () => TagQueueRequest, () => __Unit];
-var UntagQueue = [9, n0, _UQ, 0, () => UntagQueueRequest, () => __Unit];
+var ListOriginationNumbers = [
+    9,
+    n0,
+    _LON,
+    0,
+    () => ListOriginationNumbersRequest,
+    () => ListOriginationNumbersResult,
+];
+var ListPhoneNumbersOptedOut = [
+    9,
+    n0,
+    _LPNOO,
+    0,
+    () => ListPhoneNumbersOptedOutInput,
+    () => ListPhoneNumbersOptedOutResponse,
+];
+var ListPlatformApplications = [
+    9,
+    n0,
+    _LPA,
+    0,
+    () => ListPlatformApplicationsInput,
+    () => ListPlatformApplicationsResponse,
+];
+var ListSMSSandboxPhoneNumbers = [
+    9,
+    n0,
+    _LSMSSPN,
+    0,
+    () => ListSMSSandboxPhoneNumbersInput,
+    () => ListSMSSandboxPhoneNumbersResult,
+];
+var ListSubscriptions = [
+    9,
+    n0,
+    _LS,
+    0,
+    () => ListSubscriptionsInput,
+    () => ListSubscriptionsResponse,
+];
+var ListSubscriptionsByTopic = [
+    9,
+    n0,
+    _LSBT,
+    0,
+    () => ListSubscriptionsByTopicInput,
+    () => ListSubscriptionsByTopicResponse,
+];
+var ListTagsForResource = [
+    9,
+    n0,
+    _LTFR,
+    0,
+    () => ListTagsForResourceRequest,
+    () => ListTagsForResourceResponse,
+];
+var ListTopics = [9, n0, _LT, 0, () => ListTopicsInput, () => ListTopicsResponse];
+var OptInPhoneNumber = [
+    9,
+    n0,
+    _OIPN,
+    0,
+    () => OptInPhoneNumberInput,
+    () => OptInPhoneNumberResponse,
+];
+var Publish = [9, n0, _Pu, 0, () => PublishInput, () => PublishResponse];
+var PublishBatch = [9, n0, _PB, 0, () => PublishBatchInput, () => PublishBatchResponse];
+var PutDataProtectionPolicy = [
+    9,
+    n0,
+    _PDPP,
+    0,
+    () => PutDataProtectionPolicyInput,
+    () => __Unit,
+];
+var RemovePermission = [9, n0, _RP, 0, () => RemovePermissionInput, () => __Unit];
+var SetEndpointAttributes = [
+    9,
+    n0,
+    _SEA,
+    0,
+    () => SetEndpointAttributesInput,
+    () => __Unit,
+];
+var SetPlatformApplicationAttributes = [
+    9,
+    n0,
+    _SPAA,
+    0,
+    () => SetPlatformApplicationAttributesInput,
+    () => __Unit,
+];
+var SetSMSAttributes = [
+    9,
+    n0,
+    _SSMSA,
+    0,
+    () => SetSMSAttributesInput,
+    () => SetSMSAttributesResponse,
+];
+var SetSubscriptionAttributes = [
+    9,
+    n0,
+    _SSA,
+    0,
+    () => SetSubscriptionAttributesInput,
+    () => __Unit,
+];
+var SetTopicAttributes = [9, n0, _STA, 0, () => SetTopicAttributesInput, () => __Unit];
+var Subscribe = [9, n0, _Subs, 0, () => SubscribeInput, () => SubscribeResponse];
+var TagResource = [9, n0, _TR, 0, () => TagResourceRequest, () => TagResourceResponse];
+var Unsubscribe = [9, n0, _U, 0, () => UnsubscribeInput, () => __Unit];
+var UntagResource = [
+    9,
+    n0,
+    _UR,
+    0,
+    () => UntagResourceRequest,
+    () => UntagResourceResponse,
+];
+var VerifySMSSandboxPhoneNumber = [
+    9,
+    n0,
+    _VSMSSPN,
+    0,
+    () => VerifySMSSandboxPhoneNumberInput,
+    () => VerifySMSSandboxPhoneNumberResult,
+];
 
 class AddPermissionCommand extends smithyClient.Command
     .classBuilder()
@@ -5135,189 +5017,369 @@ class AddPermissionCommand extends smithyClient.Command
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "AddPermission", {})
-    .n("SQSClient", "AddPermissionCommand")
+    .s("AmazonSimpleNotificationService", "AddPermission", {})
+    .n("SNSClient", "AddPermissionCommand")
     .sc(AddPermission)
     .build() {
 }
 
-class CancelMessageMoveTaskCommand extends smithyClient.Command
+class CheckIfPhoneNumberIsOptedOutCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "CancelMessageMoveTask", {})
-    .n("SQSClient", "CancelMessageMoveTaskCommand")
-    .sc(CancelMessageMoveTask)
+    .s("AmazonSimpleNotificationService", "CheckIfPhoneNumberIsOptedOut", {})
+    .n("SNSClient", "CheckIfPhoneNumberIsOptedOutCommand")
+    .sc(CheckIfPhoneNumberIsOptedOut)
     .build() {
 }
 
-class ChangeMessageVisibilityBatchCommand extends smithyClient.Command
+class ConfirmSubscriptionCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "ChangeMessageVisibilityBatch", {})
-    .n("SQSClient", "ChangeMessageVisibilityBatchCommand")
-    .sc(ChangeMessageVisibilityBatch)
+    .s("AmazonSimpleNotificationService", "ConfirmSubscription", {})
+    .n("SNSClient", "ConfirmSubscriptionCommand")
+    .sc(ConfirmSubscription)
     .build() {
 }
 
-class ChangeMessageVisibilityCommand extends smithyClient.Command
+class CreatePlatformApplicationCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "ChangeMessageVisibility", {})
-    .n("SQSClient", "ChangeMessageVisibilityCommand")
-    .sc(ChangeMessageVisibility)
+    .s("AmazonSimpleNotificationService", "CreatePlatformApplication", {})
+    .n("SNSClient", "CreatePlatformApplicationCommand")
+    .sc(CreatePlatformApplication)
     .build() {
 }
 
-class CreateQueueCommand extends smithyClient.Command
+class CreatePlatformEndpointCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "CreateQueue", {})
-    .n("SQSClient", "CreateQueueCommand")
-    .sc(CreateQueue)
+    .s("AmazonSimpleNotificationService", "CreatePlatformEndpoint", {})
+    .n("SNSClient", "CreatePlatformEndpointCommand")
+    .sc(CreatePlatformEndpoint)
     .build() {
 }
 
-class DeleteMessageBatchCommand extends smithyClient.Command
+class CreateSMSSandboxPhoneNumberCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "DeleteMessageBatch", {})
-    .n("SQSClient", "DeleteMessageBatchCommand")
-    .sc(DeleteMessageBatch)
+    .s("AmazonSimpleNotificationService", "CreateSMSSandboxPhoneNumber", {})
+    .n("SNSClient", "CreateSMSSandboxPhoneNumberCommand")
+    .sc(CreateSMSSandboxPhoneNumber)
     .build() {
 }
 
-class DeleteMessageCommand extends smithyClient.Command
+class CreateTopicCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "DeleteMessage", {})
-    .n("SQSClient", "DeleteMessageCommand")
-    .sc(DeleteMessage)
+    .s("AmazonSimpleNotificationService", "CreateTopic", {})
+    .n("SNSClient", "CreateTopicCommand")
+    .sc(CreateTopic)
     .build() {
 }
 
-class DeleteQueueCommand extends smithyClient.Command
+class DeleteEndpointCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "DeleteQueue", {})
-    .n("SQSClient", "DeleteQueueCommand")
-    .sc(DeleteQueue)
+    .s("AmazonSimpleNotificationService", "DeleteEndpoint", {})
+    .n("SNSClient", "DeleteEndpointCommand")
+    .sc(DeleteEndpoint)
     .build() {
 }
 
-class GetQueueAttributesCommand extends smithyClient.Command
+class DeletePlatformApplicationCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "GetQueueAttributes", {})
-    .n("SQSClient", "GetQueueAttributesCommand")
-    .sc(GetQueueAttributes)
+    .s("AmazonSimpleNotificationService", "DeletePlatformApplication", {})
+    .n("SNSClient", "DeletePlatformApplicationCommand")
+    .sc(DeletePlatformApplication)
     .build() {
 }
 
-class GetQueueUrlCommand extends smithyClient.Command
+class DeleteSMSSandboxPhoneNumberCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "GetQueueUrl", {})
-    .n("SQSClient", "GetQueueUrlCommand")
-    .sc(GetQueueUrl)
+    .s("AmazonSimpleNotificationService", "DeleteSMSSandboxPhoneNumber", {})
+    .n("SNSClient", "DeleteSMSSandboxPhoneNumberCommand")
+    .sc(DeleteSMSSandboxPhoneNumber)
     .build() {
 }
 
-class ListDeadLetterSourceQueuesCommand extends smithyClient.Command
+class DeleteTopicCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "ListDeadLetterSourceQueues", {})
-    .n("SQSClient", "ListDeadLetterSourceQueuesCommand")
-    .sc(ListDeadLetterSourceQueues)
+    .s("AmazonSimpleNotificationService", "DeleteTopic", {})
+    .n("SNSClient", "DeleteTopicCommand")
+    .sc(DeleteTopic)
     .build() {
 }
 
-class ListMessageMoveTasksCommand extends smithyClient.Command
+class GetDataProtectionPolicyCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "ListMessageMoveTasks", {})
-    .n("SQSClient", "ListMessageMoveTasksCommand")
-    .sc(ListMessageMoveTasks)
+    .s("AmazonSimpleNotificationService", "GetDataProtectionPolicy", {})
+    .n("SNSClient", "GetDataProtectionPolicyCommand")
+    .sc(GetDataProtectionPolicy)
     .build() {
 }
 
-class ListQueuesCommand extends smithyClient.Command
+class GetEndpointAttributesCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "ListQueues", {})
-    .n("SQSClient", "ListQueuesCommand")
-    .sc(ListQueues)
+    .s("AmazonSimpleNotificationService", "GetEndpointAttributes", {})
+    .n("SNSClient", "GetEndpointAttributesCommand")
+    .sc(GetEndpointAttributes)
     .build() {
 }
 
-class ListQueueTagsCommand extends smithyClient.Command
+class GetPlatformApplicationAttributesCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "ListQueueTags", {})
-    .n("SQSClient", "ListQueueTagsCommand")
-    .sc(ListQueueTags)
+    .s("AmazonSimpleNotificationService", "GetPlatformApplicationAttributes", {})
+    .n("SNSClient", "GetPlatformApplicationAttributesCommand")
+    .sc(GetPlatformApplicationAttributes)
     .build() {
 }
 
-class PurgeQueueCommand extends smithyClient.Command
+class GetSMSAttributesCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "PurgeQueue", {})
-    .n("SQSClient", "PurgeQueueCommand")
-    .sc(PurgeQueue)
+    .s("AmazonSimpleNotificationService", "GetSMSAttributes", {})
+    .n("SNSClient", "GetSMSAttributesCommand")
+    .sc(GetSMSAttributes)
     .build() {
 }
 
-class ReceiveMessageCommand extends smithyClient.Command
+class GetSMSSandboxAccountStatusCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
-    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions()), middlewareSdkSqs.getReceiveMessagePlugin(config)];
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "ReceiveMessage", {})
-    .n("SQSClient", "ReceiveMessageCommand")
-    .sc(ReceiveMessage)
+    .s("AmazonSimpleNotificationService", "GetSMSSandboxAccountStatus", {})
+    .n("SNSClient", "GetSMSSandboxAccountStatusCommand")
+    .sc(GetSMSSandboxAccountStatus)
+    .build() {
+}
+
+class GetSubscriptionAttributesCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "GetSubscriptionAttributes", {})
+    .n("SNSClient", "GetSubscriptionAttributesCommand")
+    .sc(GetSubscriptionAttributes)
+    .build() {
+}
+
+class GetTopicAttributesCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "GetTopicAttributes", {})
+    .n("SNSClient", "GetTopicAttributesCommand")
+    .sc(GetTopicAttributes)
+    .build() {
+}
+
+class ListEndpointsByPlatformApplicationCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "ListEndpointsByPlatformApplication", {})
+    .n("SNSClient", "ListEndpointsByPlatformApplicationCommand")
+    .sc(ListEndpointsByPlatformApplication)
+    .build() {
+}
+
+class ListOriginationNumbersCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "ListOriginationNumbers", {})
+    .n("SNSClient", "ListOriginationNumbersCommand")
+    .sc(ListOriginationNumbers)
+    .build() {
+}
+
+class ListPhoneNumbersOptedOutCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "ListPhoneNumbersOptedOut", {})
+    .n("SNSClient", "ListPhoneNumbersOptedOutCommand")
+    .sc(ListPhoneNumbersOptedOut)
+    .build() {
+}
+
+class ListPlatformApplicationsCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "ListPlatformApplications", {})
+    .n("SNSClient", "ListPlatformApplicationsCommand")
+    .sc(ListPlatformApplications)
+    .build() {
+}
+
+class ListSMSSandboxPhoneNumbersCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "ListSMSSandboxPhoneNumbers", {})
+    .n("SNSClient", "ListSMSSandboxPhoneNumbersCommand")
+    .sc(ListSMSSandboxPhoneNumbers)
+    .build() {
+}
+
+class ListSubscriptionsByTopicCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "ListSubscriptionsByTopic", {})
+    .n("SNSClient", "ListSubscriptionsByTopicCommand")
+    .sc(ListSubscriptionsByTopic)
+    .build() {
+}
+
+class ListSubscriptionsCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "ListSubscriptions", {})
+    .n("SNSClient", "ListSubscriptionsCommand")
+    .sc(ListSubscriptions)
+    .build() {
+}
+
+class ListTagsForResourceCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "ListTagsForResource", {})
+    .n("SNSClient", "ListTagsForResourceCommand")
+    .sc(ListTagsForResource)
+    .build() {
+}
+
+class ListTopicsCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "ListTopics", {})
+    .n("SNSClient", "ListTopicsCommand")
+    .sc(ListTopics)
+    .build() {
+}
+
+class OptInPhoneNumberCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "OptInPhoneNumber", {})
+    .n("SNSClient", "OptInPhoneNumberCommand")
+    .sc(OptInPhoneNumber)
+    .build() {
+}
+
+class PublishBatchCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "PublishBatch", {})
+    .n("SNSClient", "PublishBatchCommand")
+    .sc(PublishBatch)
+    .build() {
+}
+
+class PublishCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "Publish", {})
+    .n("SNSClient", "PublishCommand")
+    .sc(Publish)
+    .build() {
+}
+
+class PutDataProtectionPolicyCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "PutDataProtectionPolicy", {})
+    .n("SNSClient", "PutDataProtectionPolicyCommand")
+    .sc(PutDataProtectionPolicy)
     .build() {
 }
 
@@ -5327,155 +5389,224 @@ class RemovePermissionCommand extends smithyClient.Command
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "RemovePermission", {})
-    .n("SQSClient", "RemovePermissionCommand")
+    .s("AmazonSimpleNotificationService", "RemovePermission", {})
+    .n("SNSClient", "RemovePermissionCommand")
     .sc(RemovePermission)
     .build() {
 }
 
-class SendMessageBatchCommand extends smithyClient.Command
-    .classBuilder()
-    .ep(commonParams)
-    .m(function (Command, cs, config, o) {
-    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions()), middlewareSdkSqs.getSendMessageBatchPlugin(config)];
-})
-    .s("AmazonSQS", "SendMessageBatch", {})
-    .n("SQSClient", "SendMessageBatchCommand")
-    .sc(SendMessageBatch)
-    .build() {
-}
-
-class SendMessageCommand extends smithyClient.Command
-    .classBuilder()
-    .ep(commonParams)
-    .m(function (Command, cs, config, o) {
-    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions()), middlewareSdkSqs.getSendMessagePlugin(config)];
-})
-    .s("AmazonSQS", "SendMessage", {})
-    .n("SQSClient", "SendMessageCommand")
-    .sc(SendMessage)
-    .build() {
-}
-
-class SetQueueAttributesCommand extends smithyClient.Command
+class SetEndpointAttributesCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "SetQueueAttributes", {})
-    .n("SQSClient", "SetQueueAttributesCommand")
-    .sc(SetQueueAttributes)
+    .s("AmazonSimpleNotificationService", "SetEndpointAttributes", {})
+    .n("SNSClient", "SetEndpointAttributesCommand")
+    .sc(SetEndpointAttributes)
     .build() {
 }
 
-class StartMessageMoveTaskCommand extends smithyClient.Command
+class SetPlatformApplicationAttributesCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "StartMessageMoveTask", {})
-    .n("SQSClient", "StartMessageMoveTaskCommand")
-    .sc(StartMessageMoveTask)
+    .s("AmazonSimpleNotificationService", "SetPlatformApplicationAttributes", {})
+    .n("SNSClient", "SetPlatformApplicationAttributesCommand")
+    .sc(SetPlatformApplicationAttributes)
     .build() {
 }
 
-class TagQueueCommand extends smithyClient.Command
+class SetSMSAttributesCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "TagQueue", {})
-    .n("SQSClient", "TagQueueCommand")
-    .sc(TagQueue)
+    .s("AmazonSimpleNotificationService", "SetSMSAttributes", {})
+    .n("SNSClient", "SetSMSAttributesCommand")
+    .sc(SetSMSAttributes)
     .build() {
 }
 
-class UntagQueueCommand extends smithyClient.Command
+class SetSubscriptionAttributesCommand extends smithyClient.Command
     .classBuilder()
     .ep(commonParams)
     .m(function (Command, cs, config, o) {
     return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
 })
-    .s("AmazonSQS", "UntagQueue", {})
-    .n("SQSClient", "UntagQueueCommand")
-    .sc(UntagQueue)
+    .s("AmazonSimpleNotificationService", "SetSubscriptionAttributes", {})
+    .n("SNSClient", "SetSubscriptionAttributesCommand")
+    .sc(SetSubscriptionAttributes)
+    .build() {
+}
+
+class SetTopicAttributesCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "SetTopicAttributes", {})
+    .n("SNSClient", "SetTopicAttributesCommand")
+    .sc(SetTopicAttributes)
+    .build() {
+}
+
+class SubscribeCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "Subscribe", {})
+    .n("SNSClient", "SubscribeCommand")
+    .sc(Subscribe)
+    .build() {
+}
+
+class TagResourceCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "TagResource", {})
+    .n("SNSClient", "TagResourceCommand")
+    .sc(TagResource)
+    .build() {
+}
+
+class UnsubscribeCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "Unsubscribe", {})
+    .n("SNSClient", "UnsubscribeCommand")
+    .sc(Unsubscribe)
+    .build() {
+}
+
+class UntagResourceCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "UntagResource", {})
+    .n("SNSClient", "UntagResourceCommand")
+    .sc(UntagResource)
+    .build() {
+}
+
+class VerifySMSSandboxPhoneNumberCommand extends smithyClient.Command
+    .classBuilder()
+    .ep(commonParams)
+    .m(function (Command, cs, config, o) {
+    return [middlewareEndpoint.getEndpointPlugin(config, Command.getEndpointParameterInstructions())];
+})
+    .s("AmazonSimpleNotificationService", "VerifySMSSandboxPhoneNumber", {})
+    .n("SNSClient", "VerifySMSSandboxPhoneNumberCommand")
+    .sc(VerifySMSSandboxPhoneNumber)
     .build() {
 }
 
 const commands = {
     AddPermissionCommand,
-    CancelMessageMoveTaskCommand,
-    ChangeMessageVisibilityCommand,
-    ChangeMessageVisibilityBatchCommand,
-    CreateQueueCommand,
-    DeleteMessageCommand,
-    DeleteMessageBatchCommand,
-    DeleteQueueCommand,
-    GetQueueAttributesCommand,
-    GetQueueUrlCommand,
-    ListDeadLetterSourceQueuesCommand,
-    ListMessageMoveTasksCommand,
-    ListQueuesCommand,
-    ListQueueTagsCommand,
-    PurgeQueueCommand,
-    ReceiveMessageCommand,
+    CheckIfPhoneNumberIsOptedOutCommand,
+    ConfirmSubscriptionCommand,
+    CreatePlatformApplicationCommand,
+    CreatePlatformEndpointCommand,
+    CreateSMSSandboxPhoneNumberCommand,
+    CreateTopicCommand,
+    DeleteEndpointCommand,
+    DeletePlatformApplicationCommand,
+    DeleteSMSSandboxPhoneNumberCommand,
+    DeleteTopicCommand,
+    GetDataProtectionPolicyCommand,
+    GetEndpointAttributesCommand,
+    GetPlatformApplicationAttributesCommand,
+    GetSMSAttributesCommand,
+    GetSMSSandboxAccountStatusCommand,
+    GetSubscriptionAttributesCommand,
+    GetTopicAttributesCommand,
+    ListEndpointsByPlatformApplicationCommand,
+    ListOriginationNumbersCommand,
+    ListPhoneNumbersOptedOutCommand,
+    ListPlatformApplicationsCommand,
+    ListSMSSandboxPhoneNumbersCommand,
+    ListSubscriptionsCommand,
+    ListSubscriptionsByTopicCommand,
+    ListTagsForResourceCommand,
+    ListTopicsCommand,
+    OptInPhoneNumberCommand,
+    PublishCommand,
+    PublishBatchCommand,
+    PutDataProtectionPolicyCommand,
     RemovePermissionCommand,
-    SendMessageCommand,
-    SendMessageBatchCommand,
-    SetQueueAttributesCommand,
-    StartMessageMoveTaskCommand,
-    TagQueueCommand,
-    UntagQueueCommand,
+    SetEndpointAttributesCommand,
+    SetPlatformApplicationAttributesCommand,
+    SetSMSAttributesCommand,
+    SetSubscriptionAttributesCommand,
+    SetTopicAttributesCommand,
+    SubscribeCommand,
+    TagResourceCommand,
+    UnsubscribeCommand,
+    UntagResourceCommand,
+    VerifySMSSandboxPhoneNumberCommand,
 };
-class SQS extends SQSClient {
+class SNS extends SNSClient {
 }
-smithyClient.createAggregatedClient(commands, SQS);
+smithyClient.createAggregatedClient(commands, SNS);
 
-const paginateListDeadLetterSourceQueues = core.createPaginator(SQSClient, ListDeadLetterSourceQueuesCommand, "NextToken", "NextToken", "MaxResults");
+const paginateListEndpointsByPlatformApplication = core.createPaginator(SNSClient, ListEndpointsByPlatformApplicationCommand, "NextToken", "NextToken", "");
 
-const paginateListQueues = core.createPaginator(SQSClient, ListQueuesCommand, "NextToken", "NextToken", "MaxResults");
+const paginateListOriginationNumbers = core.createPaginator(SNSClient, ListOriginationNumbersCommand, "NextToken", "NextToken", "MaxResults");
 
-const QueueAttributeName = {
-    All: "All",
-    ApproximateNumberOfMessages: "ApproximateNumberOfMessages",
-    ApproximateNumberOfMessagesDelayed: "ApproximateNumberOfMessagesDelayed",
-    ApproximateNumberOfMessagesNotVisible: "ApproximateNumberOfMessagesNotVisible",
-    ContentBasedDeduplication: "ContentBasedDeduplication",
-    CreatedTimestamp: "CreatedTimestamp",
-    DeduplicationScope: "DeduplicationScope",
-    DelaySeconds: "DelaySeconds",
-    FifoQueue: "FifoQueue",
-    FifoThroughputLimit: "FifoThroughputLimit",
-    KmsDataKeyReusePeriodSeconds: "KmsDataKeyReusePeriodSeconds",
-    KmsMasterKeyId: "KmsMasterKeyId",
-    LastModifiedTimestamp: "LastModifiedTimestamp",
-    MaximumMessageSize: "MaximumMessageSize",
-    MessageRetentionPeriod: "MessageRetentionPeriod",
-    Policy: "Policy",
-    QueueArn: "QueueArn",
-    ReceiveMessageWaitTimeSeconds: "ReceiveMessageWaitTimeSeconds",
-    RedriveAllowPolicy: "RedriveAllowPolicy",
-    RedrivePolicy: "RedrivePolicy",
-    SqsManagedSseEnabled: "SqsManagedSseEnabled",
-    VisibilityTimeout: "VisibilityTimeout",
+const paginateListPhoneNumbersOptedOut = core.createPaginator(SNSClient, ListPhoneNumbersOptedOutCommand, "nextToken", "nextToken", "");
+
+const paginateListPlatformApplications = core.createPaginator(SNSClient, ListPlatformApplicationsCommand, "NextToken", "NextToken", "");
+
+const paginateListSMSSandboxPhoneNumbers = core.createPaginator(SNSClient, ListSMSSandboxPhoneNumbersCommand, "NextToken", "NextToken", "MaxResults");
+
+const paginateListSubscriptionsByTopic = core.createPaginator(SNSClient, ListSubscriptionsByTopicCommand, "NextToken", "NextToken", "");
+
+const paginateListSubscriptions = core.createPaginator(SNSClient, ListSubscriptionsCommand, "NextToken", "NextToken", "");
+
+const paginateListTopics = core.createPaginator(SNSClient, ListTopicsCommand, "NextToken", "NextToken", "");
+
+const LanguageCodeString = {
+    de_DE: "de-DE",
+    en_GB: "en-GB",
+    en_US: "en-US",
+    es_419: "es-419",
+    es_ES: "es-ES",
+    fr_CA: "fr-CA",
+    fr_FR: "fr-FR",
+    it_IT: "it-IT",
+    jp_JP: "ja-JP",
+    kr_KR: "kr-KR",
+    pt_BR: "pt-BR",
+    zh_CN: "zh-CN",
+    zh_TW: "zh-TW",
 };
-const MessageSystemAttributeName = {
-    AWSTraceHeader: "AWSTraceHeader",
-    All: "All",
-    ApproximateFirstReceiveTimestamp: "ApproximateFirstReceiveTimestamp",
-    ApproximateReceiveCount: "ApproximateReceiveCount",
-    DeadLetterQueueSourceArn: "DeadLetterQueueSourceArn",
-    MessageDeduplicationId: "MessageDeduplicationId",
-    MessageGroupId: "MessageGroupId",
-    SenderId: "SenderId",
-    SentTimestamp: "SentTimestamp",
-    SequenceNumber: "SequenceNumber",
+const NumberCapability = {
+    MMS: "MMS",
+    SMS: "SMS",
+    VOICE: "VOICE",
 };
-const MessageSystemAttributeNameForSends = {
-    AWSTraceHeader: "AWSTraceHeader",
+const RouteType = {
+    Premium: "Premium",
+    Promotional: "Promotional",
+    Transactional: "Transactional",
+};
+const SMSSandboxPhoneNumberVerificationStatus = {
+    Pending: "Pending",
+    Verified: "Verified",
 };
 
 Object.defineProperty(exports, "$Command", ({
@@ -5487,69 +5618,101 @@ Object.defineProperty(exports, "__Client", ({
     get: function () { return smithyClient.Client; }
 }));
 exports.AddPermissionCommand = AddPermissionCommand;
-exports.BatchEntryIdsNotDistinct = BatchEntryIdsNotDistinct$1;
-exports.BatchRequestTooLong = BatchRequestTooLong$1;
-exports.CancelMessageMoveTaskCommand = CancelMessageMoveTaskCommand;
-exports.ChangeMessageVisibilityBatchCommand = ChangeMessageVisibilityBatchCommand;
-exports.ChangeMessageVisibilityCommand = ChangeMessageVisibilityCommand;
-exports.CreateQueueCommand = CreateQueueCommand;
-exports.DeleteMessageBatchCommand = DeleteMessageBatchCommand;
-exports.DeleteMessageCommand = DeleteMessageCommand;
-exports.DeleteQueueCommand = DeleteQueueCommand;
-exports.EmptyBatchRequest = EmptyBatchRequest$1;
-exports.GetQueueAttributesCommand = GetQueueAttributesCommand;
-exports.GetQueueUrlCommand = GetQueueUrlCommand;
-exports.InvalidAddress = InvalidAddress$1;
-exports.InvalidAttributeName = InvalidAttributeName$1;
-exports.InvalidAttributeValue = InvalidAttributeValue$1;
-exports.InvalidBatchEntryId = InvalidBatchEntryId$1;
-exports.InvalidIdFormat = InvalidIdFormat$1;
-exports.InvalidMessageContents = InvalidMessageContents$1;
-exports.InvalidSecurity = InvalidSecurity$1;
-exports.KmsAccessDenied = KmsAccessDenied$1;
-exports.KmsDisabled = KmsDisabled$1;
-exports.KmsInvalidKeyUsage = KmsInvalidKeyUsage$1;
-exports.KmsInvalidState = KmsInvalidState$1;
-exports.KmsNotFound = KmsNotFound$1;
-exports.KmsOptInRequired = KmsOptInRequired$1;
-exports.KmsThrottled = KmsThrottled$1;
-exports.ListDeadLetterSourceQueuesCommand = ListDeadLetterSourceQueuesCommand;
-exports.ListMessageMoveTasksCommand = ListMessageMoveTasksCommand;
-exports.ListQueueTagsCommand = ListQueueTagsCommand;
-exports.ListQueuesCommand = ListQueuesCommand;
-exports.MessageNotInflight = MessageNotInflight$1;
-exports.MessageSystemAttributeName = MessageSystemAttributeName;
-exports.MessageSystemAttributeNameForSends = MessageSystemAttributeNameForSends;
-exports.OverLimit = OverLimit$1;
-exports.PurgeQueueCommand = PurgeQueueCommand;
-exports.PurgeQueueInProgress = PurgeQueueInProgress$1;
-exports.QueueAttributeName = QueueAttributeName;
-exports.QueueDeletedRecently = QueueDeletedRecently$1;
-exports.QueueDoesNotExist = QueueDoesNotExist$1;
-exports.QueueNameExists = QueueNameExists$1;
-exports.ReceiptHandleIsInvalid = ReceiptHandleIsInvalid$1;
-exports.ReceiveMessageCommand = ReceiveMessageCommand;
+exports.AuthorizationErrorException = AuthorizationErrorException$1;
+exports.BatchEntryIdsNotDistinctException = BatchEntryIdsNotDistinctException$1;
+exports.BatchRequestTooLongException = BatchRequestTooLongException$1;
+exports.CheckIfPhoneNumberIsOptedOutCommand = CheckIfPhoneNumberIsOptedOutCommand;
+exports.ConcurrentAccessException = ConcurrentAccessException$1;
+exports.ConfirmSubscriptionCommand = ConfirmSubscriptionCommand;
+exports.CreatePlatformApplicationCommand = CreatePlatformApplicationCommand;
+exports.CreatePlatformEndpointCommand = CreatePlatformEndpointCommand;
+exports.CreateSMSSandboxPhoneNumberCommand = CreateSMSSandboxPhoneNumberCommand;
+exports.CreateTopicCommand = CreateTopicCommand;
+exports.DeleteEndpointCommand = DeleteEndpointCommand;
+exports.DeletePlatformApplicationCommand = DeletePlatformApplicationCommand;
+exports.DeleteSMSSandboxPhoneNumberCommand = DeleteSMSSandboxPhoneNumberCommand;
+exports.DeleteTopicCommand = DeleteTopicCommand;
+exports.EmptyBatchRequestException = EmptyBatchRequestException$1;
+exports.EndpointDisabledException = EndpointDisabledException$1;
+exports.FilterPolicyLimitExceededException = FilterPolicyLimitExceededException$1;
+exports.GetDataProtectionPolicyCommand = GetDataProtectionPolicyCommand;
+exports.GetEndpointAttributesCommand = GetEndpointAttributesCommand;
+exports.GetPlatformApplicationAttributesCommand = GetPlatformApplicationAttributesCommand;
+exports.GetSMSAttributesCommand = GetSMSAttributesCommand;
+exports.GetSMSSandboxAccountStatusCommand = GetSMSSandboxAccountStatusCommand;
+exports.GetSubscriptionAttributesCommand = GetSubscriptionAttributesCommand;
+exports.GetTopicAttributesCommand = GetTopicAttributesCommand;
+exports.InternalErrorException = InternalErrorException$1;
+exports.InvalidBatchEntryIdException = InvalidBatchEntryIdException$1;
+exports.InvalidParameterException = InvalidParameterException$1;
+exports.InvalidParameterValueException = InvalidParameterValueException$1;
+exports.InvalidSecurityException = InvalidSecurityException$1;
+exports.InvalidStateException = InvalidStateException$1;
+exports.KMSAccessDeniedException = KMSAccessDeniedException$1;
+exports.KMSDisabledException = KMSDisabledException$1;
+exports.KMSInvalidStateException = KMSInvalidStateException$1;
+exports.KMSNotFoundException = KMSNotFoundException$1;
+exports.KMSOptInRequired = KMSOptInRequired$1;
+exports.KMSThrottlingException = KMSThrottlingException$1;
+exports.LanguageCodeString = LanguageCodeString;
+exports.ListEndpointsByPlatformApplicationCommand = ListEndpointsByPlatformApplicationCommand;
+exports.ListOriginationNumbersCommand = ListOriginationNumbersCommand;
+exports.ListPhoneNumbersOptedOutCommand = ListPhoneNumbersOptedOutCommand;
+exports.ListPlatformApplicationsCommand = ListPlatformApplicationsCommand;
+exports.ListSMSSandboxPhoneNumbersCommand = ListSMSSandboxPhoneNumbersCommand;
+exports.ListSubscriptionsByTopicCommand = ListSubscriptionsByTopicCommand;
+exports.ListSubscriptionsCommand = ListSubscriptionsCommand;
+exports.ListTagsForResourceCommand = ListTagsForResourceCommand;
+exports.ListTopicsCommand = ListTopicsCommand;
+exports.NotFoundException = NotFoundException$1;
+exports.NumberCapability = NumberCapability;
+exports.OptInPhoneNumberCommand = OptInPhoneNumberCommand;
+exports.OptedOutException = OptedOutException$1;
+exports.PlatformApplicationDisabledException = PlatformApplicationDisabledException$1;
+exports.PublishBatchCommand = PublishBatchCommand;
+exports.PublishCommand = PublishCommand;
+exports.PutDataProtectionPolicyCommand = PutDataProtectionPolicyCommand;
 exports.RemovePermissionCommand = RemovePermissionCommand;
-exports.RequestThrottled = RequestThrottled$1;
+exports.ReplayLimitExceededException = ReplayLimitExceededException$1;
 exports.ResourceNotFoundException = ResourceNotFoundException$1;
-exports.SQS = SQS;
-exports.SQSClient = SQSClient;
-exports.SQSServiceException = SQSServiceException$1;
-exports.SendMessageBatchCommand = SendMessageBatchCommand;
-exports.SendMessageCommand = SendMessageCommand;
-exports.SetQueueAttributesCommand = SetQueueAttributesCommand;
-exports.StartMessageMoveTaskCommand = StartMessageMoveTaskCommand;
-exports.TagQueueCommand = TagQueueCommand;
-exports.TooManyEntriesInBatchRequest = TooManyEntriesInBatchRequest$1;
-exports.UnsupportedOperation = UnsupportedOperation$1;
-exports.UntagQueueCommand = UntagQueueCommand;
-exports.paginateListDeadLetterSourceQueues = paginateListDeadLetterSourceQueues;
-exports.paginateListQueues = paginateListQueues;
+exports.RouteType = RouteType;
+exports.SMSSandboxPhoneNumberVerificationStatus = SMSSandboxPhoneNumberVerificationStatus;
+exports.SNS = SNS;
+exports.SNSClient = SNSClient;
+exports.SNSServiceException = SNSServiceException$1;
+exports.SetEndpointAttributesCommand = SetEndpointAttributesCommand;
+exports.SetPlatformApplicationAttributesCommand = SetPlatformApplicationAttributesCommand;
+exports.SetSMSAttributesCommand = SetSMSAttributesCommand;
+exports.SetSubscriptionAttributesCommand = SetSubscriptionAttributesCommand;
+exports.SetTopicAttributesCommand = SetTopicAttributesCommand;
+exports.StaleTagException = StaleTagException$1;
+exports.SubscribeCommand = SubscribeCommand;
+exports.SubscriptionLimitExceededException = SubscriptionLimitExceededException$1;
+exports.TagLimitExceededException = TagLimitExceededException$1;
+exports.TagPolicyException = TagPolicyException$1;
+exports.TagResourceCommand = TagResourceCommand;
+exports.ThrottledException = ThrottledException$1;
+exports.TooManyEntriesInBatchRequestException = TooManyEntriesInBatchRequestException$1;
+exports.TopicLimitExceededException = TopicLimitExceededException$1;
+exports.UnsubscribeCommand = UnsubscribeCommand;
+exports.UntagResourceCommand = UntagResourceCommand;
+exports.UserErrorException = UserErrorException$1;
+exports.ValidationException = ValidationException$1;
+exports.VerificationException = VerificationException$1;
+exports.VerifySMSSandboxPhoneNumberCommand = VerifySMSSandboxPhoneNumberCommand;
+exports.paginateListEndpointsByPlatformApplication = paginateListEndpointsByPlatformApplication;
+exports.paginateListOriginationNumbers = paginateListOriginationNumbers;
+exports.paginateListPhoneNumbersOptedOut = paginateListPhoneNumbersOptedOut;
+exports.paginateListPlatformApplications = paginateListPlatformApplications;
+exports.paginateListSMSSandboxPhoneNumbers = paginateListSMSSandboxPhoneNumbers;
+exports.paginateListSubscriptions = paginateListSubscriptions;
+exports.paginateListSubscriptionsByTopic = paginateListSubscriptionsByTopic;
+exports.paginateListTopics = paginateListTopics;
 
 
 /***/ }),
 
-/***/ 6118:
+/***/ 5559:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -5557,7 +5720,7 @@ exports.paginateListQueues = paginateListQueues;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getRuntimeConfig = void 0;
 const tslib_1 = __nccwpck_require__(1860);
-const package_json_1 = tslib_1.__importDefault(__nccwpck_require__(5614));
+const package_json_1 = tslib_1.__importDefault(__nccwpck_require__(9689));
 const core_1 = __nccwpck_require__(8704);
 const credential_provider_node_1 = __nccwpck_require__(5861);
 const util_user_agent_node_1 = __nccwpck_require__(1656);
@@ -5568,7 +5731,7 @@ const node_config_provider_1 = __nccwpck_require__(5704);
 const node_http_handler_1 = __nccwpck_require__(1279);
 const util_body_length_node_1 = __nccwpck_require__(3638);
 const util_retry_1 = __nccwpck_require__(5518);
-const runtimeConfig_shared_1 = __nccwpck_require__(303);
+const runtimeConfig_shared_1 = __nccwpck_require__(2660);
 const smithy_client_1 = __nccwpck_require__(1411);
 const util_defaults_mode_node_1 = __nccwpck_require__(5435);
 const smithy_client_2 = __nccwpck_require__(1411);
@@ -5593,7 +5756,6 @@ const getRuntimeConfig = (config) => {
         defaultUserAgentProvider: config?.defaultUserAgentProvider ??
             (0, util_user_agent_node_1.createDefaultUserAgentProvider)({ serviceId: clientSharedValues.serviceId, clientVersion: package_json_1.default.version }),
         maxAttempts: config?.maxAttempts ?? (0, node_config_provider_1.loadConfig)(middleware_retry_1.NODE_MAX_ATTEMPT_CONFIG_OPTIONS, config),
-        md5: config?.md5 ?? hash_node_1.Hash.bind(null, "md5"),
         region: config?.region ??
             (0, node_config_provider_1.loadConfig)(config_resolver_1.NODE_REGION_CONFIG_OPTIONS, { ...config_resolver_1.NODE_REGION_CONFIG_FILE_OPTIONS, ...loaderConfig }),
         requestHandler: node_http_handler_1.NodeHttpHandler.create(config?.requestHandler ?? defaultConfigProvider),
@@ -5614,7 +5776,7 @@ exports.getRuntimeConfig = getRuntimeConfig;
 
 /***/ }),
 
-/***/ 303:
+/***/ 2660:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -5627,17 +5789,17 @@ const smithy_client_1 = __nccwpck_require__(1411);
 const url_parser_1 = __nccwpck_require__(4494);
 const util_base64_1 = __nccwpck_require__(8385);
 const util_utf8_1 = __nccwpck_require__(1577);
-const httpAuthSchemeProvider_1 = __nccwpck_require__(9463);
-const endpointResolver_1 = __nccwpck_require__(9553);
+const httpAuthSchemeProvider_1 = __nccwpck_require__(2078);
+const endpointResolver_1 = __nccwpck_require__(7352);
 const getRuntimeConfig = (config) => {
     return {
-        apiVersion: "2012-11-05",
+        apiVersion: "2010-03-31",
         base64Decoder: config?.base64Decoder ?? util_base64_1.fromBase64,
         base64Encoder: config?.base64Encoder ?? util_base64_1.toBase64,
         disableHostPrefix: config?.disableHostPrefix ?? false,
         endpointProvider: config?.endpointProvider ?? endpointResolver_1.defaultEndpointResolver,
         extensions: config?.extensions ?? [],
-        httpAuthSchemeProvider: config?.httpAuthSchemeProvider ?? httpAuthSchemeProvider_1.defaultSQSHttpAuthSchemeProvider,
+        httpAuthSchemeProvider: config?.httpAuthSchemeProvider ?? httpAuthSchemeProvider_1.defaultSNSHttpAuthSchemeProvider,
         httpAuthSchemes: config?.httpAuthSchemes ?? [
             {
                 schemeId: "aws.auth#sigv4",
@@ -5647,12 +5809,12 @@ const getRuntimeConfig = (config) => {
         ],
         logger: config?.logger ?? new smithy_client_1.NoOpLogger(),
         protocol: config?.protocol ??
-            new protocols_1.AwsJson1_0Protocol({
-                defaultNamespace: "com.amazonaws.sqs",
-                serviceTarget: "AmazonSQS",
-                awsQueryCompatible: true,
+            new protocols_1.AwsQueryProtocol({
+                defaultNamespace: "com.amazonaws.sns",
+                xmlNamespace: "http://sns.amazonaws.com/doc/2010-03-31/",
+                version: "2010-03-31",
             }),
-        serviceId: config?.serviceId ?? "SQS",
+        serviceId: config?.serviceId ?? "SNS",
         urlParser: config?.urlParser ?? url_parser_1.parseUrl,
         utf8Decoder: config?.utf8Decoder ?? util_utf8_1.fromUtf8,
         utf8Encoder: config?.utf8Encoder ?? util_utf8_1.toUtf8,
@@ -9851,180 +10013,6 @@ const recursionDetectionMiddleware = () => (next) => async (args) => {
     });
 };
 exports.recursionDetectionMiddleware = recursionDetectionMiddleware;
-
-
-/***/ }),
-
-/***/ 2046:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-var smithyClient = __nccwpck_require__(1411);
-var utilHexEncoding = __nccwpck_require__(6435);
-var utilUtf8 = __nccwpck_require__(1577);
-
-const resolveQueueUrlConfig = (config) => {
-    return Object.assign(config, {
-        useQueueUrlAsEndpoint: config.useQueueUrlAsEndpoint ?? true,
-    });
-};
-function queueUrlMiddleware({ useQueueUrlAsEndpoint, endpoint }) {
-    return (next, context) => {
-        return async (args) => {
-            const { input } = args;
-            const resolvedEndpoint = context.endpointV2;
-            if (!endpoint && input.QueueUrl && resolvedEndpoint && useQueueUrlAsEndpoint) {
-                const logger = context.logger instanceof smithyClient.NoOpLogger || !context.logger?.warn ? console : context.logger;
-                try {
-                    const queueUrl = new URL(input.QueueUrl);
-                    const queueUrlOrigin = new URL(queueUrl.origin);
-                    if (resolvedEndpoint.url.origin !== queueUrlOrigin.origin) {
-                        logger.warn(`QueueUrl=${input.QueueUrl} differs from SQSClient resolved endpoint=${resolvedEndpoint.url.toString()}, using QueueUrl host as endpoint.
-Set [endpoint=string] or [useQueueUrlAsEndpoint=false] on the SQSClient.`);
-                        context.endpointV2 = {
-                            ...resolvedEndpoint,
-                            url: queueUrlOrigin,
-                        };
-                    }
-                }
-                catch (e) {
-                    logger.warn(e);
-                }
-            }
-            return next(args);
-        };
-    };
-}
-const queueUrlMiddlewareOptions = {
-    name: "queueUrlMiddleware",
-    relation: "after",
-    toMiddleware: "endpointV2Middleware",
-    override: true,
-};
-const getQueueUrlPlugin = (config) => ({
-    applyToStack: (clientStack) => {
-        clientStack.addRelativeTo(queueUrlMiddleware(config), queueUrlMiddlewareOptions);
-    },
-});
-
-function receiveMessageMiddleware(options) {
-    return (next) => async (args) => {
-        const resp = await next({ ...args });
-        if (options.md5 === false) {
-            return resp;
-        }
-        const output = resp.output;
-        const messageIds = [];
-        if (output.Messages !== undefined) {
-            for (const message of output.Messages) {
-                const md5 = message.MD5OfBody;
-                const hash = new options.md5();
-                hash.update(utilUtf8.toUint8Array(message.Body || ""));
-                if (md5 !== utilHexEncoding.toHex(await hash.digest())) {
-                    messageIds.push(message.MessageId);
-                }
-            }
-        }
-        if (messageIds.length > 0) {
-            throw new Error("Invalid MD5 checksum on messages: " + messageIds.join(", "));
-        }
-        return resp;
-    };
-}
-const receiveMessageMiddlewareOptions = {
-    step: "initialize",
-    tags: ["VALIDATE_BODY_MD5"],
-    name: "receiveMessageMiddleware",
-    override: true,
-};
-const getReceiveMessagePlugin = (config) => ({
-    applyToStack: (clientStack) => {
-        clientStack.add(receiveMessageMiddleware(config), receiveMessageMiddlewareOptions);
-    },
-});
-
-const sendMessageMiddleware = (options) => (next) => async (args) => {
-    const resp = await next({ ...args });
-    if (options.md5 === false) {
-        return resp;
-    }
-    const output = resp.output;
-    const hash = new options.md5();
-    hash.update(utilUtf8.toUint8Array(args.input.MessageBody || ""));
-    if (output.MD5OfMessageBody !== utilHexEncoding.toHex(await hash.digest())) {
-        throw new Error("InvalidChecksumError");
-    }
-    return resp;
-};
-const sendMessageMiddlewareOptions = {
-    step: "initialize",
-    tags: ["VALIDATE_BODY_MD5"],
-    name: "sendMessageMiddleware",
-    override: true,
-};
-const getSendMessagePlugin = (config) => ({
-    applyToStack: (clientStack) => {
-        clientStack.add(sendMessageMiddleware(config), sendMessageMiddlewareOptions);
-    },
-});
-
-const sendMessageBatchMiddleware = (options) => (next) => async (args) => {
-    const resp = await next({ ...args });
-    if (options.md5 === false) {
-        return resp;
-    }
-    const output = resp.output;
-    const messageIds = [];
-    const entries = {};
-    if (output.Successful !== undefined) {
-        for (const entry of output.Successful) {
-            if (entry.Id !== undefined) {
-                entries[entry.Id] = entry;
-            }
-        }
-    }
-    for (const entry of args.input.Entries) {
-        if (entries[entry.Id]) {
-            const md5 = entries[entry.Id].MD5OfMessageBody;
-            const hash = new options.md5();
-            hash.update(utilUtf8.toUint8Array(entry.MessageBody || ""));
-            if (md5 !== utilHexEncoding.toHex(await hash.digest())) {
-                messageIds.push(entries[entry.Id].MessageId);
-            }
-        }
-    }
-    if (messageIds.length > 0) {
-        throw new Error("Invalid MD5 checksum on messages: " + messageIds.join(", "));
-    }
-    return resp;
-};
-const sendMessageBatchMiddlewareOptions = {
-    step: "initialize",
-    tags: ["VALIDATE_BODY_MD5"],
-    name: "sendMessageBatchMiddleware",
-    override: true,
-};
-const getSendMessageBatchPlugin = (config) => ({
-    applyToStack: (clientStack) => {
-        clientStack.add(sendMessageBatchMiddleware(config), sendMessageBatchMiddlewareOptions);
-    },
-});
-
-exports.getQueueUrlPlugin = getQueueUrlPlugin;
-exports.getReceiveMessagePlugin = getReceiveMessagePlugin;
-exports.getSendMessageBatchPlugin = getSendMessageBatchPlugin;
-exports.getSendMessagePlugin = getSendMessagePlugin;
-exports.queueUrlMiddleware = queueUrlMiddleware;
-exports.queueUrlMiddlewareOptions = queueUrlMiddlewareOptions;
-exports.receiveMessageMiddleware = receiveMessageMiddleware;
-exports.receiveMessageMiddlewareOptions = receiveMessageMiddlewareOptions;
-exports.resolveQueueUrlConfig = resolveQueueUrlConfig;
-exports.sendMessageBatchMiddleware = sendMessageBatchMiddleware;
-exports.sendMessageBatchMiddlewareOptions = sendMessageBatchMiddlewareOptions;
-exports.sendMessageMiddleware = sendMessageMiddleware;
-exports.sendMessageMiddlewareOptions = sendMessageMiddlewareOptions;
 
 
 /***/ }),
@@ -44163,42 +44151,37 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(7484));
-const client_sqs_1 = __nccwpck_require__(8868);
-const sqs_1 = __nccwpck_require__(7670);
+const client_sns_1 = __nccwpck_require__(8797);
+const sns_1 = __nccwpck_require__(2013);
 async function run() {
     try {
         // Get inputs
-        const queueUrl = core.getInput('queue-url', { required: true });
-        const messageBody = core.getInput('message-body', { required: true });
+        const topicArn = core.getInput('topic-arn', { required: true });
+        const message = core.getInput('message', { required: true });
+        const subject = core.getInput('subject') || undefined;
         const messageAttributes = core.getInput('message-attributes') || undefined;
-        const delaySecondsStr = core.getInput('delay-seconds') || '0';
         const messageGroupId = core.getInput('message-group-id') || undefined;
         const messageDeduplicationId = core.getInput('message-deduplication-id') || undefined;
-        const systemAttributes = core.getInput('system-attributes') || undefined;
-        core.info('AWS SQS Send Message');
-        core.info(`Queue URL: ${queueUrl}`);
-        // Parse delay seconds
-        const delaySeconds = parseInt(delaySecondsStr, 10);
-        if (isNaN(delaySeconds)) {
-            throw new Error(`Invalid delay-seconds value: "${delaySecondsStr}". Must be a number.`);
-        }
-        // Create SQS client (uses AWS credentials from environment)
-        const client = new client_sqs_1.SQSClient({});
+        const messageStructure = core.getInput('message-structure') || undefined;
+        core.info('AWS SNS Send Message');
+        core.info(`Topic ARN: ${topicArn}`);
+        // Create SNS client (uses AWS credentials from environment)
+        const client = new client_sns_1.SNSClient({});
         // Build configuration
         const config = {
-            queueUrl,
-            messageBody,
+            topicArn,
+            message,
+            subject,
             messageAttributes,
-            delaySeconds,
             messageGroupId,
             messageDeduplicationId,
-            systemAttributes
+            messageStructure
         };
-        // Send message
-        const result = await (0, sqs_1.sendMessage)(client, config);
+        // Publish message
+        const result = await (0, sns_1.publishMessage)(client, config);
         // Handle result
         if (!result.success) {
-            throw new Error(result.error || 'Failed to send message');
+            throw new Error(result.error || 'Failed to publish message');
         }
         // Set outputs
         if (result.messageId) {
@@ -44207,16 +44190,10 @@ async function run() {
         if (result.sequenceNumber) {
             core.setOutput('sequence-number', result.sequenceNumber);
         }
-        if (result.md5OfBody) {
-            core.setOutput('md5-of-body', result.md5OfBody);
-        }
-        if (result.md5OfAttributes) {
-            core.setOutput('md5-of-attributes', result.md5OfAttributes);
-        }
         // Summary
         core.info('');
         core.info('='.repeat(50));
-        core.info('Message sent successfully');
+        core.info('Message published successfully');
         if (result.messageId) {
             core.info(`Message ID: ${result.messageId}`);
         }
@@ -44235,7 +44212,7 @@ run();
 
 /***/ }),
 
-/***/ 7670:
+/***/ 2013:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -44275,16 +44252,15 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.parseMessageAttributes = parseMessageAttributes;
-exports.parseSystemAttributes = parseSystemAttributes;
-exports.validateFifoQueue = validateFifoQueue;
-exports.validateQueueUrl = validateQueueUrl;
-exports.validateMessageBody = validateMessageBody;
-exports.validateDelaySeconds = validateDelaySeconds;
-exports.sendMessage = sendMessage;
-const client_sqs_1 = __nccwpck_require__(8868);
+exports.validateFifoTopic = validateFifoTopic;
+exports.validateTopicArn = validateTopicArn;
+exports.validateMessage = validateMessage;
+exports.validateMessageStructure = validateMessageStructure;
+exports.publishMessage = publishMessage;
+const client_sns_1 = __nccwpck_require__(8797);
 const core = __importStar(__nccwpck_require__(7484));
 /**
- * Parse message attributes from JSON string to SQS format
+ * Parse message attributes from JSON string to SNS format
  */
 function parseMessageAttributes(attributesJson) {
     try {
@@ -44296,7 +44272,7 @@ function parseMessageAttributes(attributesJson) {
             throw new Error(`Too many message attributes: ${attributeKeys.length}. Maximum allowed is 10.`);
         }
         // Valid data types
-        const validDataTypes = ['String', 'Number', 'Binary'];
+        const validDataTypes = ['String', 'Number', 'Binary', 'String.Array'];
         for (const [key, value] of Object.entries(parsed)) {
             const attr = value;
             // Validate: DataType is required
@@ -44308,7 +44284,7 @@ function parseMessageAttributes(attributesJson) {
                 throw new Error(`Invalid DataType "${attr.DataType}" for attribute "${key}". Must be one of: ${validDataTypes.join(', ')}`);
             }
             // Validate: has appropriate value for the DataType
-            if (attr.DataType === 'String' || attr.DataType === 'Number') {
+            if (attr.DataType === 'String' || attr.DataType === 'Number' || attr.DataType === 'String.Array') {
                 if (attr.StringValue === undefined) {
                     throw new Error(`Missing StringValue for attribute "${key}" with DataType "${attr.DataType}"`);
                 }
@@ -44339,86 +44315,77 @@ function parseMessageAttributes(attributesJson) {
     }
 }
 /**
- * Parse system attributes from JSON string to SQS format
+ * Validate FIFO topic requirements
  */
-function parseSystemAttributes(attributesJson) {
-    // System attributes use the same format as message attributes
-    return parseMessageAttributes(attributesJson);
-}
-/**
- * Validate FIFO queue requirements
- */
-function validateFifoQueue(queueUrl, messageGroupId) {
-    const isFifo = queueUrl.endsWith('.fifo');
+function validateFifoTopic(topicArn, messageGroupId) {
+    const isFifo = topicArn.endsWith('.fifo');
     if (isFifo && !messageGroupId) {
-        throw new Error('message-group-id is required for FIFO queues (queue URL ends with .fifo)');
+        throw new Error('message-group-id is required for FIFO topics (topic ARN ends with .fifo)');
     }
     if (!isFifo && messageGroupId) {
-        core.warning('message-group-id is provided but queue URL does not end with .fifo. ' +
-            'This parameter will be ignored for standard queues.');
+        core.warning('message-group-id is provided but topic ARN does not end with .fifo. ' +
+            'This parameter will be ignored for standard topics.');
     }
 }
 /**
- * Validate queue URL format
+ * Validate topic ARN format
  */
-function validateQueueUrl(queueUrl) {
-    const urlPattern = /^https:\/\/sqs\.[a-z0-9-]+\.amazonaws\.com(\.cn)?\/\d+\/.+$/;
-    if (!urlPattern.test(queueUrl)) {
-        throw new Error(`Invalid queue URL format: "${queueUrl}". ` +
-            'Expected format: https://sqs.{region}.amazonaws.com/{account-id}/{queue-name}');
+function validateTopicArn(topicArn) {
+    const arnPattern = /^arn:aws:sns:[a-z0-9-]+:\d+:.+$/;
+    if (!arnPattern.test(topicArn)) {
+        throw new Error(`Invalid topic ARN format: "${topicArn}". ` +
+            'Expected format: arn:aws:sns:{region}:{account-id}:{topic-name}');
     }
 }
 /**
- * Validate message body size (max 256 KB)
+ * Validate message size (max 256 KB)
  */
-function validateMessageBody(messageBody) {
-    const sizeInBytes = Buffer.byteLength(messageBody, 'utf8');
+function validateMessage(message) {
+    const sizeInBytes = Buffer.byteLength(message, 'utf8');
     const maxSizeBytes = 256 * 1024; // 256 KB
     if (sizeInBytes > maxSizeBytes) {
-        throw new Error(`Message body size (${sizeInBytes} bytes) exceeds maximum allowed size (${maxSizeBytes} bytes / 256 KB)`);
+        throw new Error(`Message size (${sizeInBytes} bytes) exceeds maximum allowed size (${maxSizeBytes} bytes / 256 KB)`);
     }
 }
 /**
- * Validate delay seconds (0-900)
+ * Validate message structure
  */
-function validateDelaySeconds(delaySeconds) {
-    if (delaySeconds !== undefined) {
-        if (delaySeconds < 0 || delaySeconds > 900) {
-            throw new Error(`delay-seconds must be between 0 and 900 (got ${delaySeconds})`);
-        }
+function validateMessageStructure(messageStructure) {
+    if (messageStructure !== undefined && messageStructure !== 'json') {
+        throw new Error(`Invalid message-structure: "${messageStructure}". Must be "json" or left empty.`);
     }
 }
 /**
- * Send a message to an SQS queue
+ * Publish a message to an SNS topic
  */
-async function sendMessage(client, config) {
+async function publishMessage(client, config) {
     try {
         // Validate inputs
-        validateQueueUrl(config.queueUrl);
-        validateMessageBody(config.messageBody);
-        validateDelaySeconds(config.delaySeconds);
-        validateFifoQueue(config.queueUrl, config.messageGroupId);
-        core.info(`Sending message to queue: ${config.queueUrl}`);
-        core.info(`Message body size: ${Buffer.byteLength(config.messageBody, 'utf8')} bytes`);
+        validateTopicArn(config.topicArn);
+        validateMessage(config.message);
+        validateMessageStructure(config.messageStructure);
+        validateFifoTopic(config.topicArn, config.messageGroupId);
+        core.info(`Publishing message to topic: ${config.topicArn}`);
+        core.info(`Message size: ${Buffer.byteLength(config.message, 'utf8')} bytes`);
         // Build command input
         const input = {
-            QueueUrl: config.queueUrl,
-            MessageBody: config.messageBody
+            TopicArn: config.topicArn,
+            Message: config.message
         };
         // Add optional parameters
-        if (config.delaySeconds !== undefined && config.delaySeconds > 0) {
-            input.DelaySeconds = config.delaySeconds;
-            core.info(`Delay: ${config.delaySeconds} seconds`);
+        if (config.subject) {
+            input.Subject = config.subject;
+            core.info(`Subject: ${config.subject}`);
         }
         if (config.messageAttributes) {
             input.MessageAttributes = parseMessageAttributes(config.messageAttributes);
             core.info(`Message attributes: ${Object.keys(input.MessageAttributes).length} attribute(s)`);
         }
-        if (config.systemAttributes) {
-            input.MessageSystemAttributes = parseSystemAttributes(config.systemAttributes);
-            core.info(`System attributes: ${Object.keys(input.MessageSystemAttributes).length} attribute(s)`);
+        if (config.messageStructure) {
+            input.MessageStructure = config.messageStructure;
+            core.info(`Message structure: ${config.messageStructure}`);
         }
-        // FIFO queue parameters
+        // FIFO topic parameters
         if (config.messageGroupId) {
             input.MessageGroupId = config.messageGroupId;
             core.info(`Message group ID: ${config.messageGroupId}`);
@@ -44427,10 +44394,10 @@ async function sendMessage(client, config) {
             input.MessageDeduplicationId = config.messageDeduplicationId;
             core.info(`Message deduplication ID: ${config.messageDeduplicationId}`);
         }
-        // Send message
-        const command = new client_sqs_1.SendMessageCommand(input);
+        // Publish message
+        const command = new client_sns_1.PublishCommand(input);
         const response = await client.send(command);
-        core.info('✓ Message sent successfully');
+        core.info('✓ Message published successfully');
         if (response.MessageId) {
             core.info(`Message ID: ${response.MessageId}`);
         }
@@ -44440,14 +44407,12 @@ async function sendMessage(client, config) {
         return {
             success: true,
             messageId: response.MessageId,
-            sequenceNumber: response.SequenceNumber,
-            md5OfBody: response.MD5OfMessageBody,
-            md5OfAttributes: response.MD5OfMessageAttributes
+            sequenceNumber: response.SequenceNumber
         };
     }
     catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        core.error(`Failed to send message: ${errorMessage}`);
+        core.error(`Failed to publish message: ${errorMessage}`);
         return {
             success: false,
             error: errorMessage
@@ -46394,11 +46359,11 @@ module.exports = parseParams
 
 /***/ }),
 
-/***/ 5614:
+/***/ 9689:
 /***/ ((module) => {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"name":"@aws-sdk/client-sqs","description":"AWS SDK for JavaScript Sqs Client for Node.js, Browser and React Native","version":"3.940.0","scripts":{"build":"concurrently \'yarn:build:cjs\' \'yarn:build:es\' \'yarn:build:types\'","build:cjs":"node ../../scripts/compilation/inline client-sqs","build:es":"tsc -p tsconfig.es.json","build:include:deps":"lerna run --scope $npm_package_name --include-dependencies build","build:types":"tsc -p tsconfig.types.json","build:types:downlevel":"downlevel-dts dist-types dist-types/ts3.4","clean":"rimraf ./dist-* && rimraf *.tsbuildinfo","extract:docs":"api-extractor run --local","generate:client":"node ../../scripts/generate-clients/single-service --solo sqs"},"main":"./dist-cjs/index.js","types":"./dist-types/index.d.ts","module":"./dist-es/index.js","sideEffects":false,"dependencies":{"@aws-crypto/sha256-browser":"5.2.0","@aws-crypto/sha256-js":"5.2.0","@aws-sdk/core":"3.940.0","@aws-sdk/credential-provider-node":"3.940.0","@aws-sdk/middleware-host-header":"3.936.0","@aws-sdk/middleware-logger":"3.936.0","@aws-sdk/middleware-recursion-detection":"3.936.0","@aws-sdk/middleware-sdk-sqs":"3.936.0","@aws-sdk/middleware-user-agent":"3.940.0","@aws-sdk/region-config-resolver":"3.936.0","@aws-sdk/types":"3.936.0","@aws-sdk/util-endpoints":"3.936.0","@aws-sdk/util-user-agent-browser":"3.936.0","@aws-sdk/util-user-agent-node":"3.940.0","@smithy/config-resolver":"^4.4.3","@smithy/core":"^3.18.5","@smithy/fetch-http-handler":"^5.3.6","@smithy/hash-node":"^4.2.5","@smithy/invalid-dependency":"^4.2.5","@smithy/md5-js":"^4.2.5","@smithy/middleware-content-length":"^4.2.5","@smithy/middleware-endpoint":"^4.3.12","@smithy/middleware-retry":"^4.4.12","@smithy/middleware-serde":"^4.2.6","@smithy/middleware-stack":"^4.2.5","@smithy/node-config-provider":"^4.3.5","@smithy/node-http-handler":"^4.4.5","@smithy/protocol-http":"^5.3.5","@smithy/smithy-client":"^4.9.8","@smithy/types":"^4.9.0","@smithy/url-parser":"^4.2.5","@smithy/util-base64":"^4.3.0","@smithy/util-body-length-browser":"^4.2.0","@smithy/util-body-length-node":"^4.2.1","@smithy/util-defaults-mode-browser":"^4.3.11","@smithy/util-defaults-mode-node":"^4.2.14","@smithy/util-endpoints":"^3.2.5","@smithy/util-middleware":"^4.2.5","@smithy/util-retry":"^4.2.5","@smithy/util-utf8":"^4.2.0","tslib":"^2.6.2"},"devDependencies":{"@tsconfig/node18":"18.2.4","@types/node":"^18.19.69","concurrently":"7.0.0","downlevel-dts":"0.10.1","rimraf":"3.0.2","typescript":"~5.8.3"},"engines":{"node":">=18.0.0"},"typesVersions":{"<4.0":{"dist-types/*":["dist-types/ts3.4/*"]}},"files":["dist-*/**"],"author":{"name":"AWS SDK for JavaScript Team","url":"https://aws.amazon.com/javascript/"},"license":"Apache-2.0","browser":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.browser"},"react-native":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.native"},"homepage":"https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-sqs","repository":{"type":"git","url":"https://github.com/aws/aws-sdk-js-v3.git","directory":"clients/client-sqs"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"name":"@aws-sdk/client-sns","description":"AWS SDK for JavaScript Sns Client for Node.js, Browser and React Native","version":"3.940.0","scripts":{"build":"concurrently \'yarn:build:cjs\' \'yarn:build:es\' \'yarn:build:types\'","build:cjs":"node ../../scripts/compilation/inline client-sns","build:es":"tsc -p tsconfig.es.json","build:include:deps":"lerna run --scope $npm_package_name --include-dependencies build","build:types":"tsc -p tsconfig.types.json","build:types:downlevel":"downlevel-dts dist-types dist-types/ts3.4","clean":"rimraf ./dist-* && rimraf *.tsbuildinfo","extract:docs":"api-extractor run --local","generate:client":"node ../../scripts/generate-clients/single-service --solo sns"},"main":"./dist-cjs/index.js","types":"./dist-types/index.d.ts","module":"./dist-es/index.js","sideEffects":false,"dependencies":{"@aws-crypto/sha256-browser":"5.2.0","@aws-crypto/sha256-js":"5.2.0","@aws-sdk/core":"3.940.0","@aws-sdk/credential-provider-node":"3.940.0","@aws-sdk/middleware-host-header":"3.936.0","@aws-sdk/middleware-logger":"3.936.0","@aws-sdk/middleware-recursion-detection":"3.936.0","@aws-sdk/middleware-user-agent":"3.940.0","@aws-sdk/region-config-resolver":"3.936.0","@aws-sdk/types":"3.936.0","@aws-sdk/util-endpoints":"3.936.0","@aws-sdk/util-user-agent-browser":"3.936.0","@aws-sdk/util-user-agent-node":"3.940.0","@smithy/config-resolver":"^4.4.3","@smithy/core":"^3.18.5","@smithy/fetch-http-handler":"^5.3.6","@smithy/hash-node":"^4.2.5","@smithy/invalid-dependency":"^4.2.5","@smithy/middleware-content-length":"^4.2.5","@smithy/middleware-endpoint":"^4.3.12","@smithy/middleware-retry":"^4.4.12","@smithy/middleware-serde":"^4.2.6","@smithy/middleware-stack":"^4.2.5","@smithy/node-config-provider":"^4.3.5","@smithy/node-http-handler":"^4.4.5","@smithy/protocol-http":"^5.3.5","@smithy/smithy-client":"^4.9.8","@smithy/types":"^4.9.0","@smithy/url-parser":"^4.2.5","@smithy/util-base64":"^4.3.0","@smithy/util-body-length-browser":"^4.2.0","@smithy/util-body-length-node":"^4.2.1","@smithy/util-defaults-mode-browser":"^4.3.11","@smithy/util-defaults-mode-node":"^4.2.14","@smithy/util-endpoints":"^3.2.5","@smithy/util-middleware":"^4.2.5","@smithy/util-retry":"^4.2.5","@smithy/util-utf8":"^4.2.0","tslib":"^2.6.2"},"devDependencies":{"@tsconfig/node18":"18.2.4","@types/node":"^18.19.69","concurrently":"7.0.0","downlevel-dts":"0.10.1","rimraf":"3.0.2","typescript":"~5.8.3"},"engines":{"node":">=18.0.0"},"typesVersions":{"<4.0":{"dist-types/*":["dist-types/ts3.4/*"]}},"files":["dist-*/**"],"author":{"name":"AWS SDK for JavaScript Team","url":"https://aws.amazon.com/javascript/"},"license":"Apache-2.0","browser":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.browser"},"react-native":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.native"},"homepage":"https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-sns","repository":{"type":"git","url":"https://github.com/aws/aws-sdk-js-v3.git","directory":"clients/client-sns"}}');
 
 /***/ })
 
