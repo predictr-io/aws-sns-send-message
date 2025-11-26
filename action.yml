@@ -45,5 +45,5 @@ outputs:
     description: 'Sequence number for FIFO topics (only for FIFO topics)'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'
