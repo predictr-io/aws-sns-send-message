@@ -370,95 +370,11 @@ You can find your topic ARN in the AWS Console or using AWS CLI:
 aws sns list-topics
 ```
 
-## Development
-
-### Setup
-
-Clone and install dependencies:
-
-```bash
-git clone https://github.com/predictr-io/aws-sns-send-message.git
-cd aws-sns-send-message
-npm install
-```
-
-### Development Scripts
-
-```bash
-# Build the action (compile TypeScript + bundle with dependencies)
-npm run build
-
-# Run TypeScript type checking
-npm run type-check
-
-# Run ESLint
-npm run lint
-
-# Run all checks (type-check + lint)
-npm run check
-```
-
-### Build Process
-
-The build process uses `@vercel/ncc` to compile TypeScript and bundle all dependencies into a single `dist/index.js` file:
-
-```bash
-npm run build
-```
-
-**Output:**
-- `dist/index.js` - Bundled action (includes AWS SDK)
-- `dist/index.js.map` - Source map for debugging
-- `dist/licenses.txt` - License information for bundled dependencies
-
-**Important:** The `dist/` directory **must be committed** to git. GitHub Actions runs the compiled code directly from the repository.
-
-### Making Changes
-
-1. **Edit source files** in `src/`
-2. **Run checks** to validate:
-   ```bash
-   npm run check
-   ```
-3. **Build** to update `dist/`:
-   ```bash
-   npm run build
-   ```
-4. **Test locally** (optional) - Use [act](https://github.com/nektos/act) or create a test workflow
-5. **Commit everything** including `dist/`:
-   ```bash
-   git add src/ dist/
-   git commit -m "Description of changes"
-   ```
-
 ## Version References
 
 Users can reference the action:
 - **Recommended:** `predictr-io/aws-sns-send-message@v1` (floating major version, gets updates)
 - **Pinned:** `predictr-io/aws-sns-send-message@v1.0.0` (specific version, never changes)
-
-### Troubleshooting
-
-**Release workflow fails with "dist/ is out of date":**
-```bash
-npm run build
-git add dist/
-git commit -m "Update dist/ for release"
-git tag -f v1.0.0
-git push -f origin v1.0.0
-```
-
-**ESLint errors:**
-```bash
-npm run lint
-# Fix issues, then:
-npm run check
-```
-
-**TypeScript errors:**
-```bash
-npm run type-check
-```
 
 ## License
 
