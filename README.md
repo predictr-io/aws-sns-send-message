@@ -431,45 +431,7 @@ npm run build
    git commit -m "Description of changes"
    ```
 
-### Release Process
-
-Follow these steps to create a new release:
-
-#### 1. Make and Test Changes
-
-```bash
-# Make your changes to src/
-# Run checks
-npm run check
-
-# Build
-npm run build
-
-# Commit source and dist/
-git add .
-git commit -m "Add new feature"
-git push origin main
-```
-
-#### 2. Create Version Tag
-
-```bash
-# Create annotated tag (use semantic versioning)
-git tag -a v1.0.0 -m "Release v1.0.0: Initial release"
-
-# Push tag to trigger release workflow
-git push origin v1.0.0
-```
-
-#### 3. Automated Release
-
-GitHub Actions automatically:
-- ✓ Verifies `dist/` is committed
-- ✓ Verifies `dist/` is up-to-date with source
-- ✓ Creates GitHub Release with auto-generated notes
-- ✓ Updates major version tag (e.g., `v1` → `v1.0.0`)
-
-#### 4. Version References
+## Version References
 
 Users can reference the action:
 - **Recommended:** `predictr-io/aws-sns-send-message@v1` (floating major version, gets updates)
